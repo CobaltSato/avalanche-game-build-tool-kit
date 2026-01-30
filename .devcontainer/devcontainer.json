@@ -19,7 +19,7 @@
       "onAutoForward": "openPreview"
     }
   },
-  "postCreateCommand": "npm ci",
+  "postCreateCommand": "npm ci && npm install -g @google/gemini-cli",
   "customizations": {
     "vscode": {
       "settings": {
