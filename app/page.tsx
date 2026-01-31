@@ -1,11 +1,8 @@
-import { WalkGameClient } from '@walk-game';
-import './walk.css';
-
 export default function Home() {
   return (
-    <main className="walk-page">
-      <h1>Neon Grid Runner</h1>
-      <WalkGameClient />
+    <main>
+      <h1>Avalanche Game Toolkit</h1>
+      <p>Get started by editing app/page.tsx</p>
     </main>
   );
 }

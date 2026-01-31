@@ -15,9 +15,7 @@
     "paths": {
       "@/*": ["./*"],
       "@avalanche-wallet/*": ["./packages/avalanche-wallet/*"],
-      "@avalanche-wallet": ["./packages/avalanche-wallet"],
-      "@walk-game/*": ["./packages/walk-game/*"],
-      "@walk-game": ["./packages/walk-game"]
+      "@avalanche-wallet": ["./packages/avalanche-wallet"]
     },
     "plugins": [
       {
