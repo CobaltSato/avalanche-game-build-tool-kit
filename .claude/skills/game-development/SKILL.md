@@ -1,180 +1,167 @@
 ---
 name: game-development
-description: Game development orchestrator for Neon Grid Runner. Routes to sub-skills based on task context.
+description: Game development orchestrator. Routes to platform-specific skills based on project needs.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
-# Game Development - Neon Grid Runner
+# Game Development
 
-> **Orchestrator skill** for the blockchain-integrated 2D maze game built with Next.js + PixiJS + Avalanche.
+> **Orchestrator skill** that provides core principles and routes to specialized sub-skills.
 
 ---
 
 ## When to Use This Skill
 
-Any task involving the Walk Game (Neon Grid Runner) -- rendering, game logic, blockchain integration, level design, or new feature development.
-
----
-
-## Project Overview
-
-| Aspect | Detail |
-|--------|--------|
-| **Game** | Neon Grid Runner -- 2D grid-based maze |
-| **Renderer** | PixiJS v8 (vanilla, ref-based React integration) |
-| **Framework** | Next.js 14 (App Router) + React 18 |
-| **Language** | TypeScript 5 |
-| **Blockchain** | Avalanche C-Chain (Fuji Testnet), Solidity |
-| **Web3** | ethers.js v6, MetaMask |
-| **Contract** | `PositionTracker.sol` -- stores player (x,y) on-chain |
+You are working on a game development project. This skill teaches the PRINCIPLES of game development and directs you to the right sub-skill based on context.
 
 ---
 
 ## Sub-Skill Routing
 
+### Platform Selection
+
+| If the game targets... | Use Sub-Skill |
+|------------------------|---------------|
+| Web browsers (HTML5, WebGL) | `game-development/web-games` |
+| Mobile (iOS, Android) | `game-development/mobile-games` |
+| PC (Steam, Desktop) | `game-development/pc-games` |
+| VR/AR headsets | `game-development/vr-ar` |
+
+### Dimension Selection
+
+| If the game is... | Use Sub-Skill |
+|-------------------|---------------|
+| 2D (sprites, tilemaps) | `game-development/2d-games` |
+| 3D (meshes, shaders) | `game-development/3d-games` |
+
+### Specialty Areas
+
 | If you need... | Use Sub-Skill |
 |----------------|---------------|
-| PixiJS rendering, canvas, Next.js integration | `game-development/web-games` |
-| Tilemap, sprites, player graphics, animation | `game-development/2d-games` |
-| Level design, core loop, progression, balancing | `game-development/game-design` |
+| GDD, balancing, player psychology | `game-development/game-design` |
+| Multiplayer, networking | `game-development/multiplayer` |
+| Visual style, asset pipeline, animation | `game-development/game-art` |
+| Sound design, music, adaptive audio | `game-development/game-audio` |
 
 ---
 
-## Project Architecture
+## Core Principles (All Platforms)
+
+### 1. The Game Loop
+
+Every game, regardless of platform, follows this pattern:
 
 ```
-tool-kit/
-├── app/
-│   ├── page.tsx              # Mounts <WalkGameClient />
-│   ├── layout.tsx            # <WalletProvider> wraps app
-│   └── walk.css              # Neon theme (background, modal, buttons)
-├── packages/
-│   ├── walk-game/            # Game package
-│   │   ├── game/
-│   │   │   ├── types.ts      # Position, GameMap, TileType
-│   │   │   └── map.ts        # 10x10 maze, isValidMove(), isGoal()
-│   │   ├── components/
-│   │   │   ├── PixiGameBoard.tsx  # PixiJS canvas renderer
-│   │   │   └── GameBoard.tsx      # Legacy CSS Grid renderer (unused)
-│   │   ├── useWalkGame.ts    # Game state hook (input, wallet, state)
-│   │   └── WalkGameClient.tsx # Main UI (wallet chrome + game board)
-│   └── avalanche-wallet/     # Wallet abstraction (WalletProvider, useWallet)
-├── PositionTracker.sol       # Solidity contract
-└── package.json
+INPUT  → Read player actions
+UPDATE → Process game logic (fixed timestep)
+RENDER → Draw the frame (interpolated)
 ```
+
+**Fixed Timestep Rule:**
+- Physics/logic: Fixed rate (e.g., 50Hz)
+- Rendering: As fast as possible
+- Interpolate between states for smooth visuals
 
 ---
 
-## Game Loop Architecture
+### 2. Pattern Selection Matrix
 
-This game uses a **hybrid event-driven + ticker** model, not a traditional fixed-timestep loop:
+| Pattern | Use When | Example |
+|---------|----------|---------|
+| **State Machine** | 3-5 discrete states | Player: Idle→Walk→Jump |
+| **Object Pooling** | Frequent spawn/destroy | Bullets, particles |
+| **Observer/Events** | Cross-system communication | Health→UI updates |
+| **ECS** | Thousands of similar entities | RTS units, particles |
+| **Command** | Undo, replay, networking | Input recording |
+| **Behavior Tree** | Complex AI decisions | Enemy AI |
 
-```
-KEYBOARD EVENT
-  → useWalkGame validates move (isValidMove)
-  → sendTransaction('move', [dx, dy]) to blockchain
-  → fetchPosition() reads new (x, y) from contract
-  → React state update triggers useEffect
-  → PixiJS Graphics redraws player at new position
-
-PIXI TICKER (60fps)
-  → Player pulse animation (scale oscillation via sin wave)
-  → PixiJS internal render pass
-```
-
-**Key constraint:** Every move is an on-chain transaction (~2-5s latency). Game logic is event-driven, not frame-driven.
+**Decision Rule:** Start with State Machine. Add ECS only when performance demands.
 
 ---
 
-## State Flow
+### 3. Input Abstraction
+
+Abstract input into ACTIONS, not raw keys:
 
 ```
-Disconnected → [connectWallet] → Connected
-Connected    → [initialize]    → Playing
-Playing      → [move dx,dy]    → Playing (position updated)
-Playing      → [reach goal]    → Cleared (modal shown)
+"jump"  → Space, Gamepad A, Touch tap
+"move"  → WASD, Left stick, Virtual joystick
 ```
 
-Currently managed via React booleans (`isConnected`, `isInitialized`, `isCleared`). Consider migrating to a state machine for robustness.
+**Why:** Enables multi-platform, rebindable controls.
 
 ---
 
-## Rendering Architecture
+### 4. Performance Budget (60 FPS = 16.67ms)
 
-| Layer | Implementation | Updates |
-|-------|---------------|---------|
-| **Background** | CSS animated gradient (walk.css) | Never |
-| **Tiles** | PixiJS Graphics (roundRect) | Once on mount |
-| **Player** | PixiJS Graphics (circle) | On position change |
-| **Pulse animation** | PixiJS Ticker (scale sin wave) | Every frame |
-| **UI chrome** | React DOM (buttons, text, modal) | On state change |
+| System | Budget |
+|--------|--------|
+| Input | 1ms |
+| Physics | 3ms |
+| AI | 2ms |
+| Game Logic | 4ms |
+| Rendering | 5ms |
+| Buffer | 1.67ms |
 
-The canvas has `backgroundAlpha: 0` so the CSS neon background shows through.
-
----
-
-## Blockchain Integration Pattern
-
-```
-useWalkGame hook
-  ├── useWallet() → { sendTransaction, callView, account, ... }
-  ├── move(dx, dy)
-  │     1. isValidMove() -- client-side validation
-  │     2. sendTransaction('move', [dx, dy]) -- on-chain tx
-  │     3. fetchPosition() -- read updated state from contract
-  └── initialize()
-        1. sendTransaction('initialize') -- register player at (0,0)
-        2. fetchPosition() -- confirm
-```
-
-Contract: `PositionTracker.sol`
-- `initialize()` -- set player to (0,0), once per address
-- `move(dx, dy)` -- delta must be -1/0/1, no diagonals
-- `getPosition(addr)` -- returns (x, y, hasInitialized)
+**Optimization Priority:**
+1. Algorithm (O(n²) → O(n log n))
+2. Batching (reduce draw calls)
+3. Pooling (avoid GC spikes)
+4. LOD (detail by distance)
+5. Culling (skip invisible)
 
 ---
 
-## Key Patterns in This Codebase
+### 5. AI Selection by Complexity
 
-| Pattern | Where Used |
-|---------|------------|
-| **React Context** | WalletProvider wraps app |
-| **Custom Hooks** | useWalkGame, useWallet |
-| **Barrel Exports** | Each package has index.ts |
-| **Ref-based Canvas** | PixiGameBoard uses useRef + useEffect |
-| **Props-driven Rendering** | React state drives PixiJS via useEffect sync |
+| AI Type | Complexity | Use When |
+|---------|------------|----------|
+| **FSM** | Simple | 3-5 states, predictable behavior |
+| **Behavior Tree** | Medium | Modular, designer-friendly |
+| **GOAP** | High | Emergent, planning-based |
+| **Utility AI** | High | Scoring-based decisions |
 
 ---
 
-## Anti-Patterns to Avoid
+### 6. Collision Strategy
+
+| Type | Best For |
+|------|----------|
+| **AABB** | Rectangles, fast checks |
+| **Circle** | Round objects, cheap |
+| **Spatial Hash** | Many similar-sized objects |
+| **Quadtree** | Large worlds, varying sizes |
+
+---
+
+## Anti-Patterns (Universal)
 
 | Don't | Do |
 |-------|-----|
-| Import PixiJS in SSR context | Always use `'use client'`, guard with `typeof window` |
-| Create PixiJS Application in render | Create in `useEffect`, destroy in cleanup |
-| Redraw tiles on every position change | Separate tile layer (static) from player layer |
-| Send raw key events to blockchain | Validate with `isValidMove()` first |
-| Skip cleanup on unmount | `app.destroy(true, { children: true })` to release WebGL context |
+| Update everything every frame | Use events, dirty flags |
+| Create objects in hot loops | Object pooling |
+| Cache nothing | Cache references |
+| Optimize without profiling | Profile first |
+| Mix input with logic | Abstract input layer |
 
 ---
 
 ## Routing Examples
 
-### "Add a new tile type (e.g., trap)"
-→ `game-development/2d-games` for tilemap patterns
-→ Update `game/types.ts` (add TRAP to TILE_TYPES)
-→ Update `game/map.ts` (add to layout)
-→ Update `PixiGameBoard.tsx` (add drawing logic)
-→ Update `PositionTracker.sol` if on-chain validation needed
+### Example 1: "I want to make a browser-based 2D platformer"
+→ Start with `game-development/web-games` for framework selection
+→ Then `game-development/2d-games` for sprite/tilemap patterns
+→ Reference `game-development/game-design` for level design
 
-### "Improve the visual effects"
-→ `game-development/web-games` for PixiJS rendering techniques
-→ `game-development/2d-games` for animation and sprite systems
+### Example 2: "Mobile puzzle game for iOS and Android"
+→ Start with `game-development/mobile-games` for touch input and stores
+→ Use `game-development/game-design` for puzzle balancing
 
-### "Add level progression"
-→ `game-development/game-design` for progression and pacing
-→ Multiple maps, unlock conditions, difficulty curve
+### Example 3: "Multiplayer VR shooter"
+→ `game-development/vr-ar` for comfort and immersion
+→ `game-development/3d-games` for rendering
+→ `game-development/multiplayer` for networking
 
 ---
 
-> **Remember:** Every move is an on-chain transaction. Optimize for perceived responsiveness -- consider optimistic local updates with blockchain reconciliation.
+> **Remember:** Great games come from iteration, not perfection. Prototype fast, then polish.
