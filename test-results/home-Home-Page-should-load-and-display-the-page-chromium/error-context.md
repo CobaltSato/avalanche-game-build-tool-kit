@@ -1,0 +1,47 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - paragraph [ref=e4]:
+        - text: Get started by editing
+        - code [ref=e5]: app/page.tsx
+      - link "By Vercel Logo" [ref=e7] [cursor=pointer]:
+        - /url: https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app
+        - text: By
+        - img "Vercel Logo" [ref=e8]
+    - img "Next.js Logo" [ref=e10]
+    - generic [ref=e11]:
+      - heading "Counter" [level=2] [ref=e12]
+      - paragraph [ref=e13]: "0"
+      - generic [ref=e14]:
+        - button "-" [ref=e15]
+        - button "+" [ref=e16]
+    - generic [ref=e17]:
+      - link "Docs -> Find in-depth information about Next.js features and API." [ref=e18] [cursor=pointer]:
+        - /url: https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app
+        - heading "Docs ->" [level=2] [ref=e19]:
+          - text: Docs
+          - generic [ref=e20]: "->"
+        - paragraph [ref=e21]: Find in-depth information about Next.js features and API.
+      - link "Learn -> Learn about Next.js in an interactive course with quizzes!" [ref=e22] [cursor=pointer]:
+        - /url: https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app
+        - heading "Learn ->" [level=2] [ref=e23]:
+          - text: Learn
+          - generic [ref=e24]: "->"
+        - paragraph [ref=e25]: Learn about Next.js in an interactive course with quizzes!
+      - link "Templates -> Explore the Next.js 14 playground." [ref=e26] [cursor=pointer]:
+        - /url: https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app
+        - heading "Templates ->" [level=2] [ref=e27]:
+          - text: Templates
+          - generic [ref=e28]: "->"
+        - paragraph [ref=e29]: Explore the Next.js 14 playground.
+      - link "Deploy -> Instantly deploy your Next.js site to a shareable URL with Vercel." [ref=e30] [cursor=pointer]:
+        - /url: https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app
+        - heading "Deploy ->" [level=2] [ref=e31]:
+          - text: Deploy
+          - generic [ref=e32]: "->"
+        - paragraph [ref=e33]: Instantly deploy your Next.js site to a shareable URL with Vercel.
+  - alert [ref=e34]
+```
