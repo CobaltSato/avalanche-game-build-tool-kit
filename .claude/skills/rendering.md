@@ -1,3 +1,7 @@
+---
+description: "React + CSS Gridを使ったグリッドベースのゲーム描画パターン。グリッドゲームUI実装、CSS Gridレイアウト設計、動的オブジェクト配置、ゲームUIのスタイリング・アニメーションで使用する。"
+---
+
 # React + CSS Grid ゲーム描画スキル
 
 React + CSS Gridを使ったDOMベースのゲーム描画パターン。Canvas/WebGLを使わず、グリッドレイアウトでゲームボードを実装する。
