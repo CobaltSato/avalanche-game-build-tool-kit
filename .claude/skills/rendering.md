@@ -1,33 +1,33 @@
 ---
-description: "React + CSS Gridを使ったグリッドベースのゲーム描画パターン。グリッドゲームUI実装、CSS Gridレイアウト設計、動的オブジェクト配置、ゲームUIのスタイリング・アニメーションで使用する。"
+description: "Grid-based game rendering patterns using React + CSS Grid. Use for grid game UI implementation, CSS Grid layout design, dynamic object placement, and game UI styling/animation."
 ---
 
-# React + CSS Grid ゲーム描画スキル
+# React + CSS Grid Game Rendering Skill
 
-React + CSS Gridを使ったDOMベースのゲーム描画パターン。Canvas/WebGLを使わず、グリッドレイアウトでゲームボードを実装する。
+DOM-based game rendering patterns using React + CSS Grid. Implements game boards with grid layouts instead of Canvas/WebGL.
 
-## 使用タイミング
+## When to Use
 
-- グリッドベースのゲームUI実装
-- CSS Gridを使ったレイアウト設計
-- 動的オブジェクトの配置
-- ゲームUIのスタイリングとアニメーション
+- Grid-based game UI implementation
+- CSS Grid layout design
+- Dynamic object placement
+- Game UI styling and animation
 
-## 技術スタック
+## Tech Stack
 
-| 技術 | 用途 |
-|------|------|
-| **React** | UIコンポーネントのレンダリング |
-| **CSS Grid** | グリッドレイアウト |
-| **CSS変数** | サイズや色の一元管理 |
-| **インラインスタイル** | 動的な位置配置 |
-| **CSSアニメーション** | 視覚効果 |
+| Technology | Purpose |
+|------------|---------|
+| **React** | UI component rendering |
+| **CSS Grid** | Grid layout |
+| **CSS Variables** | Centralized size and color management |
+| **Inline Styles** | Dynamic positioning |
+| **CSS Animations** | Visual effects |
 
-## 基本パターン
+## Basic Patterns
 
-### グリッドレイアウトの設定
+### Grid Layout Setup
 
-**CSS変数でサイズを管理:**
+**Manage sizes with CSS variables:**
 ```css
 :root {
   --tile-size: 50px;
@@ -40,13 +40,13 @@ React + CSS Gridを使ったDOMベースのゲーム描画パターン。Canvas/
   grid-template-columns: repeat(var(--grid-size), var(--tile-size));
   grid-template-rows: repeat(var(--grid-size), var(--tile-size));
   gap: var(--grid-gap);
-  position: relative;  /* 絶対配置の基準 */
+  position: relative;  /* Reference point for absolute positioning */
 }
 ```
 
-### タイルのレンダリング
+### Tile Rendering
 
-**2次元配列からタイルを生成:**
+**Generate tiles from a 2D array:**
 ```tsx
 {gridData.map((row, y) =>
   row.map((tile, x) => (
@@ -55,21 +55,21 @@ React + CSS Gridを使ったDOMベースのゲーム描画パターン。Canvas/
 )}
 ```
 
-### 動的オブジェクトの配置
+### Dynamic Object Placement
 
-**グリッド位置で配置（重要: Gridは1ベース）:**
+**Place by grid position (Important: Grid is 1-based):**
 ```tsx
 <div
   className="object"
   style={{
     position: 'absolute',
-    gridColumnStart: position.x + 1,  // 配列は0ベース、Gridは1ベース
+    gridColumnStart: position.x + 1,  // Array is 0-based, Grid is 1-based
     gridRowStart: position.y + 1,
   }}
 />
 ```
 
-**中央揃えの計算:**
+**Center alignment calculation:**
 ```css
 .object {
   transform: translate(
@@ -79,58 +79,58 @@ React + CSS Gridを使ったDOMベースのゲーム描画パターン。Canvas/
 }
 ```
 
-## 重要なポイント
+## Key Considerations
 
-### Grid位置のインデックス
+### Grid Position Indexing
 
-- **CSS Gridは1ベース**: `gridColumnStart: 1`が最初の列
-- **配列は0ベース**: `array[0][0]`が最初の要素
-- **変換が必要**: `gridColumnStart: x + 1`
+- **CSS Grid is 1-based**: `gridColumnStart: 1` is the first column
+- **Arrays are 0-based**: `array[0][0]` is the first element
+- **Conversion required**: `gridColumnStart: x + 1`
 
-### 絶対配置の基準
+### Absolute Positioning Reference
 
-- 親要素に`position: relative`が必要
-- `gridColumnStart`/`gridRowStart`でグリッド位置を指定
-- `transform: translate()`で微調整
+- Parent element requires `position: relative`
+- Use `gridColumnStart`/`gridRowStart` to specify grid position
+- Fine-tune with `transform: translate()`
 
-### パフォーマンス
+### Performance
 
-- 小規模グリッド（10x10程度）では問題なし
-- 大規模グリッド（100x100以上）では仮想化を検討
-- Canvas/WebGLへの移行も検討可能
+- No issues for small grids (~10x10)
+- Consider virtualization for large grids (100x100+)
+- Migration to Canvas/WebGL is also an option
 
-## ベストプラクティス
+## Best Practices
 
-### CSS変数の活用
+### Leverage CSS Variables
 
-- サイズをCSS変数で一元管理
-- `calc()`で動的計算
-- レスポンシブ対応が容易
+- Centralize sizes with CSS variables
+- Use `calc()` for dynamic calculations
+- Enables easy responsive design
 
-### パフォーマンス最適化
+### Performance Optimization
 
-- `key` propを適切に設定
-- 条件付きレンダリングで不要な要素を排除
-- `useCallback`/`useMemo`でメモ化
+- Set `key` props appropriately
+- Eliminate unnecessary elements with conditional rendering
+- Memoize with `useCallback`/`useMemo`
 
-### 型安全性
+### Type Safety
 
-- Propsに型定義を付ける
-- 位置情報の型を明確にする
+- Add type definitions to props
+- Define position data types explicitly
 
-## トラブルシューティング
+## Troubleshooting
 
-### オブジェクトが正しい位置に表示されない
+### Objects not appearing in the correct position
 
-- Grid位置のインデックスを確認（0ベース→1ベース変換）
-- `transform`の計算を確認
+- Verify grid position indexing (0-based to 1-based conversion)
+- Check `transform` calculations
 
-### タイルが重なって表示される
+### Tiles overlapping
 
-- `gap`プロパティが設定されているか確認
-- タイルサイズが正しいか確認
+- Verify `gap` property is set
+- Check tile size values
 
-### アニメーションが滑らかでない
+### Animations not smooth
 
-- `transition`が設定されているか確認
-- `will-change: transform`でハードウェアアクセラレーションを有効化
+- Verify `transition` is set
+- Enable hardware acceleration with `will-change: transform`
