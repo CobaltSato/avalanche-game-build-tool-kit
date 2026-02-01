@@ -32,3 +32,5 @@ coverage/
 
 # misc
 *.pem
+
+*.skill

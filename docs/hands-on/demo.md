@@ -1,30 +1,53 @@
-Github Codespaceを開く
+# Hands-on Demo 手順
 
-Gemini CLI Companionのインストール
+## 事前準備
 
-npm インストールの完了を待つ
+### 1) GitHub Codespaces を開く
 
-スキルファイルのダウンロード
-gemini skills install https://github.com/CobaltSato/react-grid-game-rendering-skill/blob/main/react-css-grid-game-rendering.skill  --scope workspace
+### 2) Gemini CLI Companion をインストール
 
-プレイヤーの10x10の座標を保存・取得できるコントラクトを作成
-- プレイヤーの位置を初期化する関数
-- 1歩移動する関数
-ABIは .env.local.example に保存、Solidityは contracts/ に出力。
+### 3) npm install の完了を待つ
 
-ガス代を配布
+## スキルファイルの導入
 
-Remixにデプロイ
+### A) URL からインストール
 
-10x10の簡単な2Dグリッドゲームを作成してください
+```bash
+gemini skills install https://github.com/CobaltSato/react-grid-game-rendering-skill/blob/main/react-css-grid-game-rendering.skill --scope workspace
+gemini skills install https://github.com/CobaltSato/react-grid-game-rendering-skill/blob/main/avax-like-frontend-design.skill --scope workspace
+```
 
-react-css-grid-game-renderingを有効化
+### B) ローカルファイルからインストール
 
-日本語で、docs以下にtask.mdファイルを生成してフェーズを5つに分け、タスクリストを作成
-タスク完了次第、task.mdにチェックマークを入れて保存する
-フェーズごとにユーザに検収を促してから次のフェーズに進める
+```bash
+gemini skills install ./react-css-grid-game-rendering.skill --scope workspace
+gemini skills install ./avax-like-frontend-design.skill --scope workspace
+```
 
-プレイヤーをキーボードで移動し、コントラクトに座標を書き込む
-参照: PositionTracker.sol / .env.local (コントラクトアドレス・ABI)
+## コントラクト作成（10x10 座標の保存・取得）
 
-gemini skills install https://github.com/buildatscale-tv/gemini-skills --path skills/frontend-design
+プレイヤーの **10x10 の座標**を保存・取得できるコントラクトを作成する。
+
+- **位置を初期化する関数**
+- **1 歩移動する関数**
+
+出力先:
+
+- **ABI**: `.env.local.example` に保存
+- **Solidity**: `contracts/` に出力
+
+## テスト用 AVAX（ガス代）の取得とデプロイ
+
+- **Faucet**: `https://build.avax.network/console/primary-network/faucet`
+- **Remix**: `https://remix.ethereum.org/`
+
+## アプリ作成（10x10 の簡単な 2D グリッドゲーム）
+
+以下の要件で作成する:
+
+- `react-css-grid-game-rendering` を有効化する
+- 日本語で `docs/task.md` を生成し、**フェーズを 5 つ**に分けてタスクリストを作成する
+- タスク完了次第、`task.md` にチェックを入れて保存する
+- フェーズごとにユーザに検収を促してから次のフェーズへ進める
+- プレイヤーをキーボードで移動し、コントラクトに座標を書き込む
+- 参照: `PositionTracker.sol` / `.env.local`（コントラクトアドレス・ABI）
