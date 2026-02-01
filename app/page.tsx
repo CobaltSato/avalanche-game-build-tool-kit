@@ -1,13 +1,18 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useWallet } from '@avalanche-wallet/useWallet';
 
 export default function Home() {
   const gridSize = 10;
   const [playerX, setPlayerX] = useState(0);
   const [playerY, setPlayerY] = useState(0);
 
+  const { account, isConnected, connectWallet } = useWallet();
+
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (!isConnected) return; // Only allow movement if wallet is connected
+
     setPlayerX((prevX) => {
       let newX = prevX;
       if (event.key === 'ArrowLeft') {
@@ -27,7 +32,7 @@ export default function Home() {
       }
       return newY;
     });
-  }, [gridSize]);
+  }, [gridSize, isConnected]); // Add isConnected to dependencies
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -48,8 +53,20 @@ export default function Home() {
   return (
     <main>
       <h1>Avalanche Game Toolkit</h1>
-      <p>Move the player using keyboard arrows (once wallet is connected).</p>
-      <div className="grid-container">
+      {!isConnected ? (
+        <>
+          <p>Connect your wallet to start playing!</p>
+          <button onClick={connectWallet} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
+            Connect Wallet
+          </button>
+        </>
+      ) : (
+        <>
+          <p>Wallet Connected: {account}</p>
+          <p>Move the player using keyboard arrows.</p>
+        </>
+      )}
+      <div className="grid-container" style={{ marginTop: '20px' }}>
         {gridItems}
         <div
           className="player"
