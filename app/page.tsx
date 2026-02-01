@@ -1,11 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export default function Home() {
   const gridSize = 10;
   const [playerX, setPlayerX] = useState(0);
   const [playerY, setPlayerY] = useState(0);
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    setPlayerX((prevX) => {
+      let newX = prevX;
+      if (event.key === 'ArrowLeft') {
+        newX = Math.max(0, prevX - 1);
+      } else if (event.key === 'ArrowRight') {
+        newX = Math.min(gridSize - 1, prevX + 1);
+      }
+      return newX;
+    });
+
+    setPlayerY((prevY) => {
+      let newY = prevY;
+      if (event.key === 'ArrowUp') {
+        newY = Math.max(0, prevY - 1);
+      } else if (event.key === 'ArrowDown') {
+        newY = Math.min(gridSize - 1, prevY + 1);
+      }
+      return newY;
+    });
+  }, [gridSize]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   const gridItems = [];
   for (let y = 0; y < gridSize; y++) {
@@ -27,10 +56,6 @@ export default function Home() {
           style={{
             gridColumnStart: playerX + 1,
             gridRowStart: playerY + 1,
-            transform: `translate(
-              calc(var(--grid-gap) * ${playerX}),
-              calc(var(--grid-gap) * ${playerY})
-            )`,
           }}
         >
           P
