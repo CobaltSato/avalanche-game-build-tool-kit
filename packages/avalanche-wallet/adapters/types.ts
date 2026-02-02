@@ -10,8 +10,10 @@ export interface TransactionResult {
 }
 
 export interface AdapterEventHandlers {
-  onAccountsChanged: () => void;
-  onChainChanged: () => void;
+  /** EIP-1193: accountsChanged(accounts: string[]) */
+  onAccountsChanged: (accounts: string[]) => void;
+  /** EIP-1193: chainChanged(chainId: string) */
+  onChainChanged: (chainId: string) => void;
 }
 
 export interface WalletAdapter {

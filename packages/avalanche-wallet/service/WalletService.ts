@@ -63,8 +63,22 @@ export class WalletService {
 
   init(): void {
     this.adapter.subscribe({
-      onAccountsChanged: () => window.location.reload(),
-      onChainChanged: () => window.location.reload(),
+      onAccountsChanged: (accounts) => {
+        const account = accounts?.[0] ?? null;
+        this.update({
+          account,
+          isConnected: !!account,
+          txStatus: 'idle',
+          txMessage: '',
+        });
+      },
+      onChainChanged: (chainId) => {
+        this.update({
+          chainId,
+          txStatus: 'idle',
+          txMessage: '',
+        });
+      },
     });
   }
 
