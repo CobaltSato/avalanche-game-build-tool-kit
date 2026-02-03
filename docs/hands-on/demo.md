@@ -27,7 +27,8 @@
 1. リポジトリで「Code」→「Codespaces」→「Create codespace on main」
 2. VS Code がブラウザで起動するまで待つ
 
----
+https://github.com/CobaltSato/avalanche-build-games-tool-kit/tree/main
+
 
 #### 0-2. Core Wallet 拡張機能をインストール
 
@@ -35,17 +36,6 @@
 
 - ダウンロード: https://core.app/download
 - Chrome 拡張機能としてインストール
-
----
-
-#### 0-3. npm install の完了を待つ
-
-```bash
-# Codespaces が自動で実行（手動の場合）
-npm install
-```
-
----
 
 #### 0-4. Gemini CLI を起動・認証
 
@@ -72,9 +62,6 @@ gemini
 **便利なオプション:**
 
 ```bash
-# 特定のモデルを使用
-gemini -m gemini-2.5-flash
-
 # 初期プロンプト付きで起動
 gemini -i "このコードベースを説明して"
 
@@ -123,11 +110,11 @@ description: スキルの説明（Gemini がいつ使うか判断する材料）
 #### 方法 A: URL から直接インストール（推奨）
 
 ```bash
-gemini extensions install https://github.com/ankitchiplunkar/frontend-design
-
 gemini skills install https://github.com/CobaltSato/react-grid-game-rendering-skill/blob/main/react-css-grid-game-rendering.skill --scope workspace
 
 gemini skills install https://github.com/CobaltSato/react-grid-game-rendering-skill/blob/main/avax-like-frontend-design.skill --scope workspace
+
+gemini extensions install https://github.com/ankitchiplunkar/frontend-design
 ```
 
 **インストール後、スキルをリロード:**

@@ -10,353 +10,17 @@
 
 ## 目次
 
-1. [AIエージェント初心者向けガイド](#aiエージェント初心者向けガイド)
-2. [はじめに](#はじめに)
-3. [クイックスタート](#クイックスタート)
-4. [CLIコマンドとオプション](#cliコマンドとオプション)
-5. [キーボードショートカット](#キーボードショートカット)
-6. [スラッシュコマンド](#スラッシュコマンド)
-7. [エージェント](#エージェント)
-8. [スキル](#スキル)
-9. [ルール](#ルール)
-10. [フック（自動チェック）](#フック自動チェック)
-11. [MCP設定とコンテキスト管理](#mcp設定とコンテキスト管理)
-12. [Playwright MCP：ブラウザ自動化の統合](#playwright-mcpブラウザ自動化の統合)
-13. [Context7 MCP：最新ドキュメント検索](#context7-mcp最新ドキュメント検索)
-14. [コンテキスト](#コンテキスト)
-15. [メモリとCLAUDE.md](#メモリとclaudemd)
-16. [TDDワークフロー](#tddワークフロー)
-17. [ベストプラクティス](#ベストプラクティス)
-18. [よくある質問](#よくある質問)
-
----
-
-## AIエージェント初心者向けガイド
-
-### このセクションは誰のためのものか
-
-このセクションは、以下のような方のために書かれています：
-
-- ✅ **AIエージェントを初めて使う方**
-- ✅ **Claude Codeの基本的な使い方を知りたい方**
-- ✅ **「エージェント」「スキル」「ルール」などの用語が分からない方**
-- ✅ **実際の開発でどう使えばいいか知りたい方**
-
-既にClaude Codeを使い慣れている方は、[はじめに](#はじめに)から読み進めてください。
-
-### このガイドで学べること
-
-このセクションを読むと、以下のことが理解できるようになります：
-
-1. **AIエージェントとは何か** - 従来のチャットボットとの違い
-2. **Claude Codeの5つの基本概念** - スラッシュコマンド、エージェント、ルール、スキル、フック
-3. **最初の一歩** - 実際に使ってみる手順
-4. **よくある誤解** - 避けるべき間違い
-5. **段階的な学習パス** - 初心者から上級者まで
-6. **実践例** - 実際の開発フロー
-
-それでは、始めましょう！
-
----
-
-### AIエージェントとは？
-
-**AIエージェント**は、あなたの代わりにタスクを実行してくれるAIアシスタントです。
-通常のチャットボットと違うのは、**実際にコードを書いたり、ファイルを編集したり、コマンドを実行したりできる**ことです。
-
-#### 従来のチャットボット vs AIエージェント
-
-| 従来のチャットボット | AIエージェント（Claude Code） |
-|-------------------|---------------------------|
-| テキストで回答するだけ | コードを書く、ファイルを編集する、テストを実行する |
-| 情報を提供する | 実際に作業を完了させる |
-| 手動でコピペが必要 | 自動で変更を適用 |
-
-#### 具体例
-
-**従来のチャットボット**:
-```
-あなた: カウンターコンポーネントを作って
-AI: コード例を提示（あなたが手動でコピペ）
-```
-
-**AIエージェント（Claude Code）**:
-```
-あなた: カウンターコンポーネントを作って
-AI: ファイルを作成し、コードを書き、テストも作成して完了
-```
-
----
-
-### Claude Codeの基本概念
-
-Claude Codeを使いこなすために、以下の6つの概念を理解しましょう。
-
-#### 1. スラッシュコマンド（`/コマンド名`）
-
-**スラッシュコマンド**は、よく使う作業を素早く実行するためのショートカットです。
-
-```
-/plan     → 実装計画を作成
-/tdd      → テスト駆動開発を開始
-/code-review → コードレビューを実行
-```
-
-**なぜ便利？**
-- 毎回同じ説明をする必要がない
-- 一貫したワークフローで作業できる
-- 初心者でも迷わず使える
-
-**使い方**:
-```
-あなた: /plan ログイン機能を追加したい
-Claude: (自動的に計画を作成)
-```
-
-#### 2. エージェント（専門家）
-
-**エージェント**は、特定の分野に特化した専門家です。複雑なタスクを適切なエージェントに委任することで、より良い結果が得られます。
-
-| エージェント | 専門分野 | 例 |
-|------------|---------|---|
-| `planner` | 計画立案 | 「この機能をどう実装するか」を整理 |
-| `code-reviewer` | コードレビュー | 「このコードに問題はないか」をチェック |
-| `security-reviewer` | セキュリティ | 「脆弱性はないか」を確認 |
-
-**なぜ便利？**
-- 各エージェントが最適なツールだけを使う（高速）
-- 専門的な知識に基づいた判断ができる
-- 自動的に適切なエージェントが選ばれる
-
-**使い方**:
-```
-あなた: security-reviewer エージェントでこのコードをチェックして
-Claude: (セキュリティ専門家として詳細にチェック)
-```
-
-#### 3. ルール（常に守られる）
-
-**ルール**は、Claude Codeが**常に**従うガイドラインです。意識しなくても自動的に適用されます。
-
-例：
-- シークレットをコードにハードコードしない
-- すべてのユーザー入力をバリデートする
-- テストカバレッジ80%以上を維持する
-
-**なぜ便利？**
-- 人間が忘れがちなチェックを自動化
-- プロジェクト全体で一貫した品質を保証
-- セキュリティリスクを自動的に防ぐ
-
-#### 4. スキル（知識ベース）
-
-**スキル**は、特定分野の深い知識をまとめたものです。Claude Codeが必要に応じて自動的に参照します。
-
-例：
-- `frontend-patterns`: React/Next.jsのベストプラクティス
-- `security-review`: セキュリティチェックリスト
-- `tdd-workflow`: テスト駆動開発の手順
-
-**なぜ便利？**
-- 最新のベストプラクティスを自動的に適用
-- プロジェクト固有の知識を共有
-- ドキュメントとしても機能
-
-#### 5. フック（自動チェック）
-
-**フック**は、特定の操作（ファイル編集、コマンド実行など）の前後に自動で実行されるチェックです。
-
-例：
-- ファイル編集後 → `console.log` が残っていないかチェック
-- ビルド実行後 → エラーがないか確認
-- PR作成後 → レビューコマンドを表示
-
-**なぜ便利？**
-- 人間が忘れがちなチェックを自動化
-- 本番環境へのデバッグコード混入を防ぐ
-- 開発フローをスムーズにする
-
-#### 6. MCP（Model Context Protocol）
-
-**MCP**は、Claude Codeが外部サービスと連携するための仕組みです。
-
-例：
-- **Playwright MCP**: ブラウザを操作してE2Eテストを実行
-- **GitHub MCP**: リポジトリの情報を取得
-- **Supabase MCP**: データベースにアクセス
-
-**なぜ便利？**
-- Claude Codeが直接サービスと対話できる
-- テストの実行やデバッグが自動化される
-- 手動での操作が減る
-
-**注意**: MCPを有効化しすぎると、コンテキストウィンドウが縮小する可能性があります。
-詳細は [MCP設定とコンテキスト管理](#mcp設定とコンテキスト管理) を参照してください。
-
----
-
-### 初心者のための最初の一歩
-
-#### Step 1: 基本的な会話から始める
-
-まずは、普通のチャットのように話しかけてみましょう。
-
-```
-あなた: このプロジェクトの構造を説明して
-Claude: (プロジェクトの構造を説明)
-```
-
-#### Step 2: スラッシュコマンドを試す
-
-次に、スラッシュコマンドを使ってみましょう。
-
-```
-あなた: /plan 簡単なカウンター機能を追加したい
-Claude: (実装計画を作成)
-```
-
-#### Step 3: エージェントを明示的に呼ぶ
-
-特定のエージェントに依頼してみましょう。
-
-```
-あなた: code-reviewer エージェントで、このコードをレビューして
-Claude: (コードレビューを実行)
-```
-
-#### Step 4: 実際の開発に使う
-
-実際の開発タスクで使ってみましょう。
-
-```
-あなた: /tdd ユーザー認証機能を実装したい
-Claude: (テストを先に書いてから実装)
-```
-
----
-
-### よくある誤解と注意点
-
-#### ❌ 誤解1: 「AIエージェントは完璧だから、何も確認しなくていい」
-
-**正解**: AIエージェントは強力ですが、完璧ではありません。生成されたコードは必ずレビューし、テストを実行して確認しましょう。
-
-#### ❌ 誤解2: 「すべてのコマンドを覚える必要がある」
-
-**正解**: よく使うコマンド（`/plan`, `/tdd`, `/code-review`）だけ覚えれば十分です。他のコマンドは必要になったときに調べればOKです。
-
-#### ❌ 誤解3: 「エージェントを手動で選ぶ必要がある」
-
-**正解**: 通常は自動的に適切なエージェントが選ばれます。特別な場合だけ明示的に指定すればOKです。
-
-#### ❌ 誤解4: 「設定ファイルを理解しないと使えない」
-
-**正解**: 設定ファイルは既に用意されているので、そのまま使えます。カスタマイズしたい場合だけ編集すればOKです。
-
----
-
-### 段階的な学習パス
-
-#### レベル1: 初心者（今ここ）
-
-- ✅ 基本的な会話ができる
-- ✅ `/plan` コマンドが使える
-- ✅ エージェントの概念を理解している
-
-**次のステップ**: [スラッシュコマンド](#スラッシュコマンド)のセクションを読む
-
-#### レベル2: 中級者
-
-- ✅ 主要なスラッシュコマンド（`/plan`, `/tdd`, `/code-review`）を使える
-- ✅ エージェントを明示的に呼び出せる
-- ✅ ルールとスキルの違いを理解している
-
-**次のステップ**: [エージェント](#エージェント)と[スキル](#スキル)のセクションを詳しく読む
-
-#### レベル3: 上級者
-
-- ✅ すべてのコマンドを使いこなせる
-- ✅ カスタムエージェントやスキルを作成できる
-- ✅ フックを設定して自動化できる
-- ✅ MCP設定を最適化できる
-
-**次のステップ**: [ベストプラクティス](#ベストプラクティス)を実践し、プロジェクトに貢献
-
----
-
-### 困ったときの対処法
-
-#### Q: コマンドがうまく動かない
-
-1. コマンド名のスペルを確認（`/plan` は `/Plan` ではない）
-2. プロジェクトの設定ファイル（`.claude/`）が正しく配置されているか確認
-3. Claude Codeを再起動してみる
-
-#### Q: エージェントが期待通りに動かない
-
-1. エージェント名を確認（`planner` は `plan` ではない）
-2. タスクがそのエージェントの専門分野か確認
-3. より具体的な指示を出す
-
-#### Q: 生成されたコードが期待と違う
-
-1. より具体的な要件を伝える
-2. 例や参考コードを提示する
-3. `/code-review` でレビューして改善点を確認
-
-#### Q: 設定ファイルを編集したい
-
-1. `.claude/` ディレクトリ内のファイルを編集
-2. 変更後、Claude Codeを再起動
-3. 構文エラーがないか確認（JSONファイルは特に注意）
-
----
-
-### 実践例：実際の開発フロー
-
-初心者が実際の開発でAIエージェントを使う流れを紹介します。
-
-#### シナリオ：ログインボタンを追加したい
-
-**Step 1: 計画を立てる**
-```
-あなた: /plan ログインボタンを追加したい。クリックするとウォレット接続ダイアログが開くようにしたい
-Claude: (実装計画を作成：どのファイルを編集するか、どのコンポーネントを使うかなど)
-```
-
-**Step 2: テストを先に書く（TDD）**
-```
-あなた: /tdd ログインボタンの実装を開始
-Claude: (まずテストを書く → テストが失敗することを確認 → 実装 → テストが通る)
-```
-
-**Step 3: コードレビュー**
-```
-あなた: /code-review
-Claude: (コードの品質、セキュリティ、ベストプラクティスをチェック)
-```
-
-**Step 4: E2Eテスト**
-```
-あなた: /e2e ログインボタンをクリックしてウォレット接続ができることを確認
-Claude: (PlaywrightでE2Eテストを作成・実行)
-```
-
-**Step 5: 完成！**
-これで、テスト付きの高品質なコードが完成しました。
-
----
-
-### 次のステップ
-
-このセクションを読み終えたら、以下の順番で読み進めることをおすすめします：
-
-1. **[はじめに](#はじめに)**: プロジェクトの構造を理解
-2. **[クイックスタート](#クイックスタート)**: 実際に使ってみる
-3. **[スラッシュコマンド](#スラッシュコマンド)**: よく使うコマンドを覚える
-4. **[エージェント](#エージェント)**: 専門家の使い方を学ぶ
-
-それでは、実際に使ってみましょう！🚀
+1. [はじめに](#はじめに)
+2. [クイックスタート](#クイックスタート)
+3. [スラッシュコマンド](#スラッシュコマンド)
+4. [エージェント](#エージェント)
+5. [ルール](#ルール)
+6. [スキル](#スキル)
+7. [フック（自動チェック）](#フック自動チェック)
+8. [MCP設定とコンテキスト管理](#mcp設定とコンテキスト管理)
+9. [コンテキスト](#コンテキスト)
+10. [TDDワークフロー](#tddワークフロー)
+11. [よくある質問](#よくある質問)
 
 ---
 
@@ -366,13 +30,75 @@ Claude: (PlaywrightでE2Eテストを作成・実行)
 
 ```
 .claude/
-├── agents/      # 専門エージェント（自動で呼び出される）
-├── commands/    # /plan, /tdd などのスラッシュコマンド
-├── rules/       # 常に守られるルール
-├── skills/      # 特定分野の知識ベース
-├── contexts/    # 作業モード切替用
-├── scripts/     # フックで使うスクリプト
-└── settings.local.json  # MCP・フック設定
+├── agents/              # 専門エージェント（9個）
+│   ├── planner.md
+│   ├── architect.md
+│   ├── tdd-guide.md
+│   ├── code-reviewer.md
+│   ├── security-reviewer.md
+│   ├── build-error-resolver.md
+│   ├── e2e-runner.md
+│   ├── refactor-cleaner.md
+│   └── doc-updater.md
+├── commands/            # スラッシュコマンド（19個）
+│   ├── plan.md
+│   ├── tdd.md
+│   ├── code-review.md
+│   ├── e2e.md
+│   ├── build-fix.md
+│   ├── refactor-clean.md
+│   ├── test-coverage.md
+│   ├── verify.md
+│   ├── checkpoint.md
+│   ├── update-docs.md
+│   ├── update-codemaps.md
+│   ├── eval.md
+│   ├── orchestrate.md
+│   ├── skill-create.md
+│   ├── learn.md
+│   ├── evolve.md
+│   ├── instinct-status.md
+│   ├── instinct-import.md
+│   └── instinct-export.md
+├── rules/               # 常時適用ルール（8個）
+│   ├── security.md
+│   ├── coding-style.md
+│   ├── testing.md
+│   ├── git-workflow.md
+│   ├── agents.md
+│   ├── performance.md
+│   ├── patterns.md
+│   └── hooks.md
+├── skills/              # 知識ベース（11個）
+│   ├── frontend-patterns/
+│   ├── backend-patterns/
+│   ├── coding-standards/
+│   ├── security-review/
+│   ├── tdd-workflow/
+│   ├── eval-harness/
+│   ├── verification-loop/
+│   ├── iterative-retrieval/
+│   ├── strategic-compact/
+│   ├── continuous-learning/
+│   └── continuous-learning-v2/
+├── contexts/            # 作業モード（3個）
+│   ├── dev.md
+│   ├── review.md
+│   └── research.md
+├── scripts/             # フック用スクリプト
+│   ├── hooks/           # フックスクリプト（6個）
+│   │   ├── check-console-log.js
+│   │   ├── evaluate-session.js
+│   │   ├── pre-compact.js
+│   │   ├── session-end.js
+│   │   ├── session-start.js
+│   │   └── suggest-compact.js
+│   └── lib/             # ライブラリスクリプト（4個）
+│       ├── package-manager.js
+│       ├── session-aliases.js
+│       ├── session-manager.js
+│       └── utils.js
+└── settings.local.json  # MCP・フック設定（プロジェクト固有）
 ```
 
 特別な設定は不要です。Claude Code を起動すれば自動的に読み込まれます。
@@ -381,22 +107,6 @@ Claude: (PlaywrightでE2Eテストを作成・実行)
 
 ## クイックスタート
 
-### 初めて使う場合
-
-このプロジェクトは既に設定済みですが、他のプロジェクトでも同じ設定を使いたい場合は：
-
-```bash
-# このプロジェクトの設定をコピー
-cp -r .claude/ ~/your-project/.claude/
-
-# または、everything-claude-code から直接取得
-git clone https://github.com/affaan-m/everything-claude-code.git
-cp everything-claude-code/agents/*.md ~/.claude/agents/
-cp everything-claude-code/rules/*.md ~/.claude/rules/
-cp everything-claude-code/commands/*.md ~/.claude/commands/
-cp -r everything-claude-code/skills/* ~/.claude/skills/
-```
-
 ### 最初のステップ
 
 1. **開発を始める**: `/plan` コマンドで実装計画を作成
@@ -404,146 +114,12 @@ cp -r everything-claude-code/skills/* ~/.claude/skills/
 3. **レビューする**: `/code-review` コマンドで品質チェック
 4. **E2Eテスト**: `/e2e` コマンドで画面テストを生成
 
----
-
-## CLIコマンドとオプション
-
-Claude Code はターミナルから様々なオプションで起動できます。
-
-### 基本的な起動方法
+### 他のプロジェクトで使う場合
 
 ```bash
-# 現在のディレクトリで Claude Code を起動
-claude
-
-# 最後のセッションを再開
-claude --continue
-
-# 特定のセッションを再開
-claude --resume session-name
-
-# デバッグログを有効にして起動
-claude --debug
-
-# 非対話モードでプロンプトを実行（スクリプト用）
-claude -p "Your prompt here"
+# このプロジェクトの設定をコピー
+cp -r .claude/ ~/your-project/.claude/
 ```
-
-### セッション管理
-
-| コマンド | 説明 |
-|---------|------|
-| `claude` | 新しいセッションを開始 |
-| `claude --continue` | 最後のセッションを再開 |
-| `claude --resume <name>` | 名前付きセッションを再開 |
-| `claude --debug` | デバッグモードで起動 |
-| `claude -p "prompt"` | 非対話モードで実行 |
-
-### 対話モード内のコマンド
-
-Claude Code 内で使える組み込みコマンド:
-
-| コマンド | 説明 |
-|---------|------|
-| `/help` | ヘルプを表示 |
-| `/mcp` | MCP サーバーの状態を確認 |
-| `/context` | コンテキスト使用量を確認 |
-| `/init` | CLAUDE.md ファイルを生成 |
-| `/clear` | 会話履歴をクリア |
-| `/compact` | コンテキストを圧縮 |
-| `/cost` | セッションのコストを表示 |
-| `/doctor` | Claude Code の設定を診断 |
-| `/login` | Anthropic アカウントにログイン |
-| `/logout` | ログアウト |
-| `/terminal-setup` | ターミナル設定（ショートカット有効化） |
-
-### 設定変更後の再起動
-
-**重要**: 設定ファイル（`.claude/settings.local.json` など）を変更した後は、Claude Code を再起動する必要があります。
-
-```markdown
-## 設定変更の手順
-
-1. 設定ファイルを編集
-2. ファイルを保存
-3. Claude Code を終了（Ctrl+D）
-4. `claude` で再起動
-5. 新しい設定が読み込まれる
-```
-
----
-
-## キーボードショートカット
-
-Claude Code には豊富なキーボードショートカットがあります。`?` を押すと全てのショートカットを確認できます。
-
-### 一般操作
-
-| ショートカット | 説明 |
-|--------------|------|
-| `Ctrl+C` | 現在の入力・生成をキャンセル |
-| `Ctrl+D` | Claude Code を終了 |
-| `Ctrl+L` | ターミナル画面をクリア（履歴は保持） |
-| `Ctrl+G` | 外部エディタでプロンプトを編集 |
-| `Ctrl+O` | 詳細出力（verbose）をトグル |
-| `Ctrl+R` | コマンド履歴を検索 |
-| `Ctrl+T` | タスクリストの表示をトグル |
-| `Ctrl+B` | タスクをバックグラウンドに移動 |
-
-### ナビゲーション
-
-| ショートカット | 説明 |
-|--------------|------|
-| `↑` / `↓` | コマンド履歴をナビゲート |
-| `←` / `→` | ダイアログのタブを切り替え |
-| `Tab` | コマンド補完 |
-| `/` | 利用可能なコマンド一覧を表示 |
-
-### 特殊操作
-
-| ショートカット | 説明 |
-|--------------|------|
-| `Esc` → `Esc` | コード・会話を以前の状態に巻き戻し |
-| `Shift+Tab` または `Alt+M` | パーミッションモードをトグル |
-| `Option+P` (Mac) / `Alt+P` | モデルを切り替え（プロンプト保持） |
-| `Option+T` (Mac) / `Alt+T` | 拡張思考モードをトグル |
-| `Ctrl+V` / `Cmd+V` | クリップボードから画像を貼り付け |
-
-### 画像の貼り付け
-
-クリップボードにある画像や画像ファイルのパスを貼り付けることができます:
-- **macOS**: `Cmd+V`
-- **iTerm2**: `Cmd+V`
-- **Windows/Linux**: `Ctrl+V` または `Alt+V`
-
-### ショートカットのカスタマイズ
-
-`~/.claude/keybindings.json` でショートカットをカスタマイズできます:
-
-```json
-{
-  "$schema": "https://platform.claude.com/docs/schemas/claude-code/keybindings.json",
-  "bindings": [
-    {
-      "context": "Chat",
-      "bindings": {
-        "ctrl+e": "chat:externalEditor",
-        "ctrl+u": null
-      }
-    }
-  ]
-}
-```
-
-**利用可能なアクション**:
-- `chat:submit` - メッセージを送信
-- `chat:externalEditor` - 外部エディタを開く
-- `app:interrupt` - 操作をキャンセル
-- `app:exit` - 終了
-- `app:toggleTodos` - タスクリスト表示
-- `app:toggleTranscript` - 詳細出力表示
-- `history:search` - 履歴検索
-- `history:previous` / `history:next` - 履歴ナビゲーション
 
 ---
 
@@ -560,82 +136,59 @@ Claude Code には豊富なキーボードショートカットがあります�
 | `/code-review` | コードレビューを実行 | コードを書き終えた後に |
 | `/build-fix` | ビルドエラーを修正 | `npm run build` が失敗した時に |
 | `/e2e` | E2E テストを生成・実行 | 画面操作のテストを書きたい時に |
-| `/verify` | 検証ループを実行 | 変更が正しいか確認したい時に |
 
-### 使い方の例
+### 全コマンド一覧（19個）
 
-```
-あなた: /plan ゲームボードに10x10グリッドを追加したい
+`.claude/commands/` ディレクトリに以下のコマンドが定義されています：
 
-Claude: (ファイル構成、実装手順、注意点をまとめた計画を出力)
-```
-
-```
-あなた: /tdd プレイヤーの移動機能
-
-Claude: (テストを先に書いてから実装する TDD フローで進行)
-```
-
-### 全コマンド一覧
-
-| コマンド | 説明 |
-|---------|------|
-| `/plan` | 実装計画作成 |
-| `/tdd` | テスト駆動開発 |
-| `/code-review` | コードレビュー |
-| `/e2e` | E2E テスト生成 |
-| `/test-coverage` | カバレッジ分析 |
-| `/build-fix` | ビルドエラー修正 |
-| `/refactor-clean` | 不要コード削除 |
-| `/verify` | 検証ループ |
-| `/checkpoint` | 状態の保存 |
-| `/update-docs` | ドキュメント更新 |
-| `/update-codemaps` | コードマップ更新 |
-| `/eval` | 評価ハーネス |
-| `/orchestrate` | マルチエージェント連携 |
-| `/skill-create` | Git 履歴からスキル生成 |
-| `/learn` | セッション中のパターン抽出 |
-| `/evolve` | 学習した知見をスキルに昇格 |
-| `/instinct-status` | 学習状況の確認 |
-| `/instinct-import` | 学習データのインポート |
-| `/instinct-export` | 学習データのエクスポート |
+| コマンド | ファイル | 説明 |
+|---------|---------|------|
+| `/plan` | `plan.md` | 実装計画作成 |
+| `/tdd` | `tdd.md` | テスト駆動開発 |
+| `/code-review` | `code-review.md` | コードレビュー |
+| `/e2e` | `e2e.md` | E2E テスト生成 |
+| `/test-coverage` | `test-coverage.md` | カバレッジ分析 |
+| `/build-fix` | `build-fix.md` | ビルドエラー修正 |
+| `/refactor-clean` | `refactor-clean.md` | 不要コード削除 |
+| `/verify` | `verify.md` | 検証ループ |
+| `/checkpoint` | `checkpoint.md` | 状態の保存 |
+| `/update-docs` | `update-docs.md` | ドキュメント更新 |
+| `/update-codemaps` | `update-codemaps.md` | コードマップ更新 |
+| `/eval` | `eval.md` | 評価ハーネス |
+| `/orchestrate` | `orchestrate.md` | マルチエージェント連携 |
+| `/skill-create` | `skill-create.md` | Git履歴からスキル生成 |
+| `/learn` | `learn.md` | セッション中のパターン抽出 |
+| `/evolve` | `evolve.md` | 学習した知見をスキルに昇格 |
+| `/instinct-status` | `instinct-status.md` | 学習状況の確認 |
+| `/instinct-import` | `instinct-import.md` | 学習データのインポート |
+| `/instinct-export` | `instinct-export.md` | 学習データのエクスポート |
 
 ---
 
 ## エージェント
 
-エージェントは特定分野の専門家です。Claude が必要に応じて自動で呼び出しますが、
-直接指示することもできます。
+エージェントは特定分野の専門家です。Claude が必要に応じて自動で呼び出しますが、直接指示することもできます。
 
 ### エージェントファーストデザイン
 
 複雑なタスクは専門エージェントに委任することで、**実行が高速になり、フォーカスも維持**されます。
 50個のツールを持つエージェントより、**5個に絞ったエージェントの方が効率的**に動作します。
 
-各エージェントは **frontmatter形式** で定義され、必要最小限のツールだけが割り当てられています：
+### エージェント一覧（9個）
 
-```yaml
----
-name: planner
-description: Expert planning specialist for complex features
-tools: ["Read", "Grep", "Glob"]  # 必要最小限のツールのみ
-model: opus
----
-```
+`.claude/agents/` ディレクトリに以下のエージェントが定義されています：
 
-### エージェント一覧
-
-| エージェント | 得意なこと | 主なツール |
-|------------|-----------|-----------|
-| **planner** | 「何をどの順番で作るか」を整理する。複雑な機能の分解が得意 | Read, Grep, Glob |
-| **architect** | システム全体の設計判断。「この構成で大丈夫？」に答える | Read, Grep, Codebase Search |
-| **tdd-guide** | テストを先に書いて進める開発スタイルをガイド | Read, Write, Edit |
-| **code-reviewer** | 書いたコードの品質・安全性をチェック | Read, Grep, Codebase Search |
-| **security-reviewer** | セキュリティの穴がないか専門的にチェック（OWASP Top 10対応） | Read, Grep, Codebase Search |
-| **build-error-resolver** | ビルドエラーの原因を特定して修正 | Read, Bash, Grep |
-| **e2e-runner** | Playwright で画面のテストを作成・実行 | Read, Write, Bash |
-| **refactor-cleaner** | 使われていないコードの発見と削除 | Read, Grep, Delete |
-| **doc-updater** | ドキュメントの更新・同期 | Read, Write, Grep |
+| エージェント | ファイル | 得意なこと | 主なツール |
+|------------|---------|-----------|-----------|
+| **planner** | `planner.md` | 「何をどの順番で作るか」を整理する | Read, Grep, Glob |
+| **architect** | `architect.md` | システム全体の設計判断 | Read, Grep, Codebase Search |
+| **tdd-guide** | `tdd-guide.md` | テストを先に書いて進める開発スタイルをガイド | Read, Write, Edit |
+| **code-reviewer** | `code-reviewer.md` | 書いたコードの品質・安全性をチェック | Read, Grep, Codebase Search |
+| **security-reviewer** | `security-reviewer.md` | セキュリティの穴がないか専門的にチェック | Read, Grep, Codebase Search |
+| **build-error-resolver** | `build-error-resolver.md` | ビルドエラーの原因を特定して修正 | Read, Bash, Grep |
+| **e2e-runner** | `e2e-runner.md` | Playwright で画面のテストを作成・実行 | Read, Write, Bash |
+| **refactor-cleaner** | `refactor-cleaner.md` | 使われていないコードの発見と削除 | Read, Grep, Delete |
+| **doc-updater** | `doc-updater.md` | ドキュメントの更新・同期 | Read, Write, Grep |
 
 ### 使い方の例
 
@@ -643,20 +196,18 @@ model: opus
 
 ```
 あなた: security-reviewer エージェントで WalletProvider のセキュリティをチェックして
-
 あなた: planner エージェントで NFT マーケットプレイス機能の実装計画を立てて
 ```
-
-### エージェントの使い分け
-
-`.claude/rules/agents.md` に、どのエージェントをいつ使うかのガイドラインが定義されています。
-複雑なタスクは自動的に適切なエージェントに委任されます。
 
 ---
 
 ## ルール
 
 ルールは Claude が**常に**従うガイドラインです。意識しなくても自動的に適用されます。
+
+### ルール一覧（8個）
+
+`.claude/rules/` ディレクトリに以下のルールが定義されています：
 
 | ルールファイル | 内容 |
 |--------------|------|
@@ -694,30 +245,24 @@ const apiKey = process.env.API_KEY
 | **保存場所** | `~/.claude/skills/` または `.claude/skills/` | `~/.claude/commands/` または `.claude/commands/` |
 | **呼び出し方法** | 自動参照（Claudeが必要に応じて） | `/コマンド名` で明示的に呼び出し |
 | **用途** | 広範なワークフロー定義、ドメイン知識 | 素早く実行可能なプロンプト |
-| **例** | TDD手法の詳細定義、セキュリティチェックリスト | `/tdd`, `/plan`, `/code-review` |
 
-### スキル一覧
+### スキル一覧（11個）
 
-| スキル | 内容 |
-|-------|------|
-| **frontend-patterns** | React / Next.js のベストプラクティス |
-| **backend-patterns** | API 設計、キャッシュ、サーバーサイドパターン |
-| **coding-standards** | TypeScript / JavaScript のコーディング規約 |
-| **security-review** | セキュリティチェックリスト（OWASP Top 10対応） |
-| **tdd-workflow** | テスト駆動開発の手順（RED→GREEN→REFACTOR） |
-| **eval-harness** | 検証ループの評価フレームワーク |
-| **verification-loop** | 継続的な検証パターン |
-| **iterative-retrieval** | サブエージェントのコンテキスト問題を解決する段階的検索 |
-| **strategic-compact** | コンテキストが大きくなった時の整理提案 |
-| **continuous-learning** | セッションからパターンを自動抽出 |
-| **continuous-learning-v2** | 信頼度スコア付きの学習システム |
+`.claude/skills/` ディレクトリに以下のスキルが定義されています：
 
-### スキルの配置場所
-
-- **ユーザー共通**: `~/.claude/skills/` - すべてのプロジェクトで使用
-- **プロジェクト固有**: `.claude/skills/` - このプロジェクトのみで使用
-
-プロジェクト固有のスキルは、ユーザー共通のスキルより優先されます。
+| スキル | ディレクトリ | 内容 | 関連ファイル |
+|-------|------------|------|------------|
+| **frontend-patterns** | `frontend-patterns/` | React / Next.js のベストプラクティス | `SKILL.md` |
+| **backend-patterns** | `backend-patterns/` | API 設計、キャッシュ、サーバーサイドパターン | `SKILL.md` |
+| **coding-standards** | `coding-standards/` | TypeScript / JavaScript のコーディング規約 | `SKILL.md` |
+| **security-review** | `security-review/` | セキュリティチェックリスト（OWASP Top 10対応） | `SKILL.md`, `cloud-infrastructure-security.md` |
+| **tdd-workflow** | `tdd-workflow/` | テスト駆動開発の手順（RED→GREEN→REFACTOR） | `SKILL.md` |
+| **eval-harness** | `eval-harness/` | 検証ループの評価フレームワーク | `SKILL.md` |
+| **verification-loop** | `verification-loop/` | 継続的な検証パターン | `SKILL.md` |
+| **iterative-retrieval** | `iterative-retrieval/` | サブエージェントのコンテキスト問題を解決する段階的検索 | `SKILL.md` |
+| **strategic-compact** | `strategic-compact/` | コンテキストが大きくなった時の整理提案 | `SKILL.md`, `suggest-compact.sh` |
+| **continuous-learning** | `continuous-learning/` | セッションからパターンを自動抽出 | `SKILL.md`, `config.json`, `evaluate-session.sh` |
+| **continuous-learning-v2** | `continuous-learning-v2/` | 信頼度スコア付きの学習システム | `SKILL.md`, `config.json`, `agents/observer.md`, `hooks/observe.sh`, `scripts/instinct-cli.py` |
 
 ---
 
@@ -726,243 +271,41 @@ const apiKey = process.env.API_KEY
 フックはバックグラウンドで自動実行されるチェック機能です。
 意識する必要はありませんが、時折メッセージが表示されます。
 
-### フックとは？
-
-**フック**は、Claude Codeが特定の操作（ツールの実行、ファイルの編集など）を行う**前後**に自動的に実行されるスクリプトです。
-開発者の負担を減らし、品質を保つための自動化機能です。
-
 ### フックの種類と実行タイミング
 
-| 種類 | 実行タイミング | 用途 | 実行されるタイミングの例 |
-|------|--------------|------|------------------------|
-| **PreToolUse** | **ツール実行前** | 特定操作のブロックやリマインド | Claude Codeがツールを実行しようとする**直前** |
-| **PostToolUse** | **ツール実行後** | 編集後の自動フォーマット、チェック | Claude Codeがツールを実行した**直後** |
-| **Stop** | **セッション終了前** | 最終的なチェック（console.log警告など） | Claude Codeがレスポンスを返す**直前**（各メッセージの終了時） |
+| 種類 | 実行タイミング | 用途 |
+|------|--------------|------|
+| **PreToolUse** | **ツール実行前** | 特定操作のブロックやリマインド |
+| **PostToolUse** | **ツール実行後** | 編集後の自動フォーマット、チェック |
+| **Stop** | **セッション終了前** | 最終的なチェック（console.log警告など） |
 
-### 具体的な実行タイミング
+### フックスクリプト（6個）
 
-#### PreToolUse（ツール実行前）
+`.claude/scripts/hooks/` ディレクトリに以下のスクリプトが定義されています：
 
-**いつ発動する？**
-- Claude Codeがツールを実行しようとする**直前**に発動
-- ツールが実際に実行される**前に**チェックやブロックを行う
+| スクリプト | 用途 |
+|----------|------|
+| `check-console-log.js` | console.logの検出（Stopフックで使用） |
+| `evaluate-session.js` | セッションの評価 |
+| `pre-compact.js` | コンテキスト圧縮前の処理 |
+| `session-end.js` | セッション終了時の処理 |
+| `session-start.js` | セッション開始時の処理 |
+| `suggest-compact.js` | コンテキスト圧縮の提案 |
 
-**このプロジェクトで設定されている例**:
+### ライブラリスクリプト（4個）
 
-1. **開発サーバーの起動をブロック**
-   ```
-   あなた: npm run dev を実行して
-   Claude: [ツール実行を試みる]
-   → PreToolUseフックが発動
-   → [Hook] BLOCKED: Dev server must run in tmux
-   → ツール実行がブロックされる
-   ```
+`.claude/scripts/lib/` ディレクトリに以下のユーティリティが定義されています：
 
-2. **tmuxの使用を推奨**
-   ```
-   あなた: npm install を実行して
-   Claude: [ツール実行を試みる]
-   → PreToolUseフックが発動
-   → [Hook] Consider running in tmux
-   → ツール実行は続行される（警告のみ）
-   ```
-
-3. **git push前のリマインダー**
-   ```
-   あなた: git push を実行して
-   Claude: [ツール実行を試みる]
-   → PreToolUseフックが発動
-   → [Hook] Review changes before push...
-   → ツール実行は続行される（リマインダーのみ）
-   ```
-
-4. **不要なドキュメントファイルの作成をブロック**
-   ```
-   あなた: 新しいドキュメントファイルを作成して
-   Claude: [Writeツールでファイル作成を試みる]
-   → PreToolUseフックが発動
-   → [Hook] BLOCKED: Unnecessary documentation file creation
-   → ファイル作成がブロックされる
-   ```
-
-#### PostToolUse（ツール実行後）
-
-**いつ発動する？**
-- Claude Codeがツールを実行した**直後**に発動
-- 実行結果を確認して、チェックや通知を行う
-
-**このプロジェクトで設定されている例**:
-
-1. **PR作成後の通知**
-   ```
-   あなた: gh pr create を実行して
-   Claude: [BashツールでPR作成]
-   → PostToolUseフックが発動（Bashコマンド実行後）
-   → PRのURLを検出
-   → [Hook] PR created: https://github.com/...
-   → [Hook] To review: gh pr review ...
-   ```
-
-2. **ビルド完了後の通知**
-   ```
-   あなた: npm run build を実行して
-   Claude: [Bashツールでビルド実行]
-   → PostToolUseフックが発動（ビルド完了後）
-   → [Hook] Build completed - async analysis running in background
-   ```
-
-3. **TypeScriptファイル編集後の型チェック**
-   ```
-   あなた: app/page.tsx を編集して
-   Claude: [Editツールでファイル編集]
-   → PostToolUseフックが発動（.ts/.tsxファイル編集後）
-   → TypeScriptの型チェックを実行
-   → エラーがあれば表示
-   ```
-
-4. **JS/TSファイル編集後のconsole.log検出**
-   ```
-   あなた: app/components/Counter.tsx を編集して
-   Claude: [Editツールでファイル編集]
-   → PostToolUseフックが発動（.ts/.tsx/.js/.jsxファイル編集後）
-   → console.logを検索
-   → 見つかれば警告を表示
-   → [Hook] WARNING: console.log found in ...
-   ```
-
-#### Stop（セッション終了前）
-
-**いつ発動する？**
-- Claude Codeがレスポンスを返す**直前**に発動
-- **各メッセージの終了時**に実行される
-- 最終的なチェックを行う
-
-**このプロジェクトで設定されている例**:
-
-```
-あなた: コードを編集して
-Claude: [ファイルを編集]
-→ [レスポンスを返そうとする]
-→ Stopフックが発動（各レスポンスの終了時）
-→ 変更されたファイルをチェック
-→ console.logがあれば警告
-```
-
-### 実行の流れ（具体例）
-
-#### 例1: ファイル編集の流れ
-
-```
-1. あなた: app/page.tsx を編集して
-
-2. Claude: [Editツールを実行しようとする]
-   → PreToolUseフック: 発動しない（この操作には該当なし）
-
-3. Claude: [Editツールでファイルを編集]
-   → ファイルが編集される
-
-4. Claude: [編集完了]
-   → PostToolUseフックが発動
-   → TypeScript型チェックを実行
-   → console.log検出を実行
-   → 問題があれば警告を表示
-
-5. Claude: [レスポンスを返そうとする]
-   → Stopフックが発動
-   → 最終チェック（console.logなど）
-   → レスポンスを返す
-```
-
-#### 例2: 開発サーバー起動の流れ
-
-```
-1. あなた: npm run dev を実行して
-
-2. Claude: [Bashツールを実行しようとする]
-   → PreToolUseフックが発動
-   → matcherで "npm run dev" を検出
-   → ブロックスクリプトを実行
-   → [Hook] BLOCKED: Dev server must run in tmux
-   → ツール実行がブロックされる（process.exit(1)）
-
-3. Claude: [エラーメッセージを返す]
-   → Stopフックが発動
-   → レスポンスを返す
-```
-
-#### 例3: PR作成の流れ
-
-```
-1. あなた: gh pr create を実行して
-
-2. Claude: [Bashツールを実行しようとする]
-   → PreToolUseフック: 発動しない（この操作には該当なし）
-
-3. Claude: [BashツールでPR作成]
-   → PRが作成される
-   → 出力にPRのURLが含まれる
-
-4. Claude: [PR作成完了]
-   → PostToolUseフックが発動
-   → matcherで "Bash" ツールを検出
-   → 出力からPRのURLを抽出
-   → [Hook] PR created: https://github.com/...
-   → [Hook] To review: gh pr review ...
-
-5. Claude: [レスポンスを返そうとする]
-   → Stopフックが発動
-   → レスポンスを返す
-```
-
-### フックの実行順序
-
-1. **PreToolUse** - ツール実行前
-2. **ツール実行** - 実際の操作
-3. **PostToolUse** - ツール実行後
-4. **Stop** - レスポンス返却前
-
-### フックが発動する条件（Matcher）
-
-フックは、**matcher**という条件に一致した時だけ発動します。
-
-**例**:
-```json
-{
-  "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx)$\"",
-  "hooks": [...]
-}
-```
-
-このmatcherは：
-- `tool == "Edit"` - Editツールが使われた時
-- `tool_input.file_path matches "\\.(ts|tsx)$"` - .tsまたは.tsxファイルが編集された時
-
-**両方の条件を満たした時だけ**フックが発動します。
-
-### よくある質問
-
-#### Q: フックはいつ発動するの？
-**A:** 
-- **PreToolUse**: Claude Codeがツールを実行しようとする直前
-- **PostToolUse**: Claude Codeがツールを実行した直後
-- **Stop**: Claude Codeがレスポンスを返す直前（各メッセージの終了時）
-
-#### Q: フックが発動しない場合は？
-**A:** 
-1. matcherの条件に一致していない可能性
-2. `.claude/settings.local.json` の設定が正しいか確認
-3. フックの構文エラーがないか確認
-
-#### Q: フックを無効にしたい場合は？
-**A:** `.claude/settings.local.json` の `hooks` セクションから該当フックを削除してください。
-
-#### Q: フックの実行をスキップできる？
-**A:** 通常はスキップできません。フックは自動的に実行されます。特定のフックを無効にしたい場合は、設定ファイルから削除してください。
-
-#### Q: フックがエラーを出したら？
-**A:** フックのエラーは警告として表示されますが、通常の操作は続行されます。ただし、`process.exit(1)` を呼ぶフック（PreToolUse）は操作をブロックします。
+| スクリプト | 用途 |
+|----------|------|
+| `package-manager.js` | パッケージマネージャーの抽象化 |
+| `session-aliases.js` | セッションエイリアス管理 |
+| `session-manager.js` | セッション管理 |
+| `utils.js` | ユーティリティ関数 |
 
 ### 動作するフック
+
+`.claude/settings.local.json` で定義されているフック：
 
 | タイミング | 内容 | 表示されるメッセージ例 |
 |-----------|------|---------------------|
@@ -974,46 +317,7 @@ Claude: [ファイルを編集]
 | ビルド完了後 | 分析通知 | `[Hook] Build completed` |
 | .ts/.tsx 編集後 | TypeScript の型チェック | (エラーがあれば表示) |
 | JS/TS 編集後 | console.log の検出 | `[Hook] WARNING: console.log found` |
-
-### フックの実装例
-
-console.log 検出フックの実装例（`.claude/settings.local.json`）：
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx)$\"",
-        "hooks": [{
-          "type": "command",
-          "command": "node -e \"const fs=require('fs');let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const p=i.tool_input?.file_path;if(p&&fs.existsSync(p)){const c=fs.readFileSync(p,'utf8');const lines=c.split('\\n');const matches=[];lines.forEach((l,idx)=>{if(/console\\.log/.test(l))matches.push((idx+1)+': '+l.trim())});if(matches.length){console.error('[Hook] WARNING: console.log found in '+p);matches.slice(0,5).forEach(m=>console.error(m));console.error('[Hook] Remove console.log before committing')}}console.log(d)})\""
-        }],
-        "description": "Warn about console.log statements after edits"
-      }
-    ]
-  }
-}
-```
-
-このフックは、ファイル編集後に自動で `console.log` を検出し、開発者に削除を促します。
-本番環境へのデバッグコード混入を防ぐための仕組みです。
-
-### tmux について
-
-一部のフックが tmux の使用を推奨します。tmux は長時間実行されるコマンド（開発サーバーなど）を
-バックグラウンドで安全に動かすためのツールです。
-
-```bash
-# 新しい tmux セッションで dev サーバーを起動
-tmux new-session -d -s dev "npm run dev"
-
-# セッションに接続
-tmux attach -t dev
-
-# セッションから離脱 (サーバーは動き続ける)
-Ctrl+B → D
-```
+| セッション終了時 | console.log の最終チェック | `check-console-log.js` が実行される |
 
 ---
 
@@ -1021,26 +325,27 @@ Ctrl+B → D
 
 ### MCP（Model Context Protocol）とは
 
-MCPサーバーは外部サービス（GitHub、Supabase、Vercel、Playwright など）と連携するための仕組みです。
-Claude Codeが直接これらのサービスと対話できるようになります。
+MCPサーバーは外部サービス（GitHub、Supabase、Vercel、Playwright、Context7 など）と連携するための仕組みです。
 
-しかし、**MCPを有効化しすぎると、コンテキストウィンドウが大幅に縮小します**。
+### ⚠️ 重要な制約：コンテキストウィンドウの縮小
 
-### 重要な制約
+**MCPを有効化しすぎると、コンテキストウィンドウが大幅に縮小します**。
 
-> ⚠️ **警告**: MCPを有効化しすぎると、**200kあったコンテキストが70kまで減少する可能性**があります。
+> **警告**: MCPを有効化しすぎると、**200kあったコンテキストが70kまで減少する可能性**があります。
 
 ### 推奨される運用方法
 
 | 項目 | 推奨値 | 説明 |
 |------|--------|------|
-| **設定ファイル内のMCP数** | 20〜30個 | すべてのMCP設定を記述しておく |
+| **設定ファイル内のMCP数** | 20〜30個 | すべてのMCP設定を記述しておく（必要に応じて有効化） |
 | **プロジェクトごとの有効MCP数** | **10個以下** | 実際に使うMCPだけを有効化 |
 | **有効なツール数** | **80個以下** | ツール数もコンテキストに影響 |
 
-### 現在の設定
+### settings.local.json の構成
 
-このプロジェクトでは、`.claude/settings.local.json` で以下のように設定されています：
+`.claude/settings.local.json` はプロジェクト固有の設定ファイルです。以下の設定が含まれています：
+
+#### 1. MCP設定
 
 ```json
 {
@@ -1049,17 +354,28 @@ Claude Codeが直接これらのサービスと対話できるようになりま
 }
 ```
 
-**Playwright MCP**が有効化されており、Claude Codeがブラウザを直接操作してE2Eテストを実行できます。
-詳細は [Playwright MCP：ブラウザ自動化の統合](#playwright-mcpブラウザ自動化の統合) を参照してください。
+- **Playwright MCP**が有効化されており、Claude Codeがブラウザを直接操作してE2Eテストを実行できます
+- `enableAllProjectMcpServers: true` により、プロジェクトの `.mcp.json` で定義されたMCPサーバーが自動的に有効化されます
 
-使わないMCPは `disabledMcpServers` で無効化しておくことが重要です。
+#### 2. パーミッション設定
 
-### MCP設定の場所
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__context7__query-docs",
+      "Bash(node create-pptx-final.js:*)",
+      "Bash(unzip:*)"
+    ]
+  }
+}
+```
 
-- **ユーザー共通**: `~/.claude.json` または `~/.claude/settings.json`
-- **プロジェクト固有**: `.claude/settings.local.json`
+特定のMCPツールやBashコマンドの実行を許可します。
 
-プロジェクト固有の設定が優先されます。
+#### 3. フック設定
+
+詳細は [フック（自動チェック）](#フック自動チェック) セクションを参照してください。
 
 ### MCPサーバーの確認
 
@@ -1068,439 +384,13 @@ Claude Code 内でMCPサーバーの状態を確認できます:
 ```bash
 # Claude Code 内で
 /mcp
-
-# ターミナルから（Claude Code 外）
-claude mcp list
 ```
-
-現在のプロジェクトでは以下のMCPが有効です:
-
-| サーバー | コマンド | 用途 |
-|---------|---------|------|
-| playwright | `npx @playwright/mcp@latest` | ブラウザ自動化・E2Eテスト |
-| context7 | `npx -y @upstash/context7-mcp` | 最新ドキュメント検索 |
-
----
-
-## Playwright MCP：ブラウザ自動化の統合
-
-### Playwright MCPとは
-
-**Playwright MCP**は、Claude CodeがPlaywrightの機能を直接使えるようにするMCPサーバーです。
-通常のPlaywrightコマンドを実行するだけでなく、**Claude Codeがブラウザを操作してテストを実行したり、デバッグしたりできます**。
-
-#### 通常のPlaywright vs Playwright MCP
-
-| 通常のPlaywright | Playwright MCP |
-|----------------|---------------|
-| コマンドラインから実行 | Claude Codeから直接実行 |
-| テストファイルを手動で書く | Claude Codeがテストを生成・実行 |
-| 結果を手動で確認 | Claude Codeが結果を分析 |
-| スクリーンショットを手動で確認 | Claude Codeが自動でスクリーンショットを取得・分析 |
-
-### 設定方法
-
-このプロジェクトでは、既にPlaywright MCPが設定されています。
-
-#### 1. MCP設定ファイル（`.mcp.json`）
-
-```json
-{
-  "mcpServers": {
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"]
-    }
-  }
-}
-```
-
-#### 2. Claude Code設定（`.claude/settings.local.json`）
-
-```json
-{
-  "enabledMcpjsonServers": ["playwright"],
-  "enableAllProjectMcpServers": true
-}
-```
-
-これで、Claude CodeがPlaywright MCPサーバーにアクセスできるようになります。
-
-### Playwright MCPの主な機能
-
-Playwright MCPを通じて、Claude Codeは以下のことができます：
-
-1. **ブラウザの起動・操作**
-   - ページの読み込み
-   - 要素のクリック、入力、スクロール
-   - スクリーンショットの取得
-
-2. **テストの実行**
-   - 既存のテストファイルの実行
-   - テスト結果の分析
-   - 失敗したテストのデバッグ
-
-3. **テストの生成**
-   - ユーザーフローの記録
-   - テストコードの自動生成
-   - テストケースの提案
-
-4. **デバッグ支援**
-   - トレースの取得・分析
-   - ネットワークリクエストの監視
-   - コンソールログの確認
-
-### 使い方の例
-
-#### 例1: E2Eテストを生成・実行
-
-```
-あなた: /e2e ログインボタンをクリックしてウォレット接続ができることを確認
-
-Claude: 
-1. Playwright MCPを使ってブラウザを起動
-2. ログインボタンを探してクリック
-3. ウォレット接続ダイアログが表示されることを確認
-4. テストコードを生成
-5. テストを実行して結果を報告
-```
-
-#### 例2: 画面の動作確認
-
-```
-あなた: ホームページが正しく表示されているか確認して
-
-Claude:
-1. Playwright MCPで http://localhost:3000 を開く
-2. スクリーンショットを取得
-3. 重要な要素（ナビゲーション、コンテンツ）が表示されているか確認
-4. コンソールエラーがないか確認
-5. 結果を報告
-```
-
-#### 例3: バグの再現とデバッグ
-
-```
-あなた: カウンターの+ボタンを3回クリックしても値が2のままなのを確認して
-
-Claude:
-1. Playwright MCPでページを開く
-2. +ボタンを3回クリック
-3. カウンターの値を確認
-4. 問題を再現
-5. コンソールログやネットワークリクエストを確認
-6. 原因を特定して修正案を提案
-```
-
-### Playwright MCPのコマンド
-
-Claude Codeは、Playwright MCPを通じて以下のような操作を実行できます：
-
-| 操作 | 説明 | 例 |
-|------|------|---|
-| **ページを開く** | URLにアクセス | `page.goto("/")` |
-| **要素をクリック** | ボタンやリンクをクリック | `page.click("button")` |
-| **入力する** | フォームに入力 | `page.fill("input", "text")` |
-| **スクリーンショット** | 画面をキャプチャ | `page.screenshot()` |
-| **要素を確認** | 要素の存在・テキストを確認 | `page.locator(".title").textContent()` |
-| **テストを実行** | テストファイルを実行 | `playwright test` |
-
-### E2Eテストコマンドとの連携
-
-`/e2e` コマンドは、内部的にPlaywright MCPを使用します：
-
-```
-あなた: /e2e ユーザーが商品を検索して詳細ページを見る流れをテスト
-
-Claude (e2e-runnerエージェント):
-1. Playwright MCPでブラウザを起動
-2. 検索フォームに入力
-3. 検索結果から商品を選択
-4. 詳細ページが表示されることを確認
-5. テストコードを生成（tests/e2e/product-search.spec.ts）
-6. テストを実行
-7. 結果とスクリーンショットを報告
-```
-
-### 実際のテストファイル例
-
-このプロジェクトには、既にPlaywrightテストが含まれています：
-
-**`tests/home.spec.ts`**:
-```typescript
-import { test, expect } from "@playwright/test";
-
-test.describe("Home Page", () => {
-  test("should load and display the page", async ({ page }) => {
-    await page.goto("/");
-    await expect(page).toHaveTitle(/Next/i);
-  });
-});
-```
-
-**`tests/counter.spec.ts`**:
-```typescript
-import { test, expect } from "@playwright/test";
-
-test.describe("Counter Component", () => {
-  test("should increment when + button is clicked", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("button", { name: "+" }).click();
-    await expect(page.getByTestId("counter-value")).toHaveText("1");
-  });
-});
-```
-
-### Playwright設定（`playwright.config.ts`）
-
-このプロジェクトのPlaywright設定：
-
-```typescript
-export default defineConfig({
-  testDir: "./tests",
-  fullyParallel: true,
-  use: {
-    baseURL: "http://localhost:3000",
-    trace: "on-first-retry",
-  },
-  webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-  },
-});
-```
-
-**重要な設定**:
-- `baseURL`: テストのベースURL（`page.goto("/")` は `http://localhost:3000/` を開く）
-- `webServer`: テスト実行時に自動的に開発サーバーを起動
-- `trace`: 失敗時にトレースを記録（デバッグに便利）
-
-### よくある使い方
-
-#### 1. テストを実行する
-
-```
-あなた: Playwrightテストを実行して
-
-Claude: 
-- Playwright MCPを使って `npx playwright test` を実行
-- 結果を分析して報告
-- 失敗したテストがあれば、原因を特定
-```
-
-#### 2. UIの動作確認
-
-```
-あなた: カウンターコンポーネントが正しく動作するか確認して
-
-Claude:
-- Playwright MCPでページを開く
-- +ボタンをクリック
-- 値が増えることを確認
-- -ボタンをクリック
-- 値が減ることを確認
-- 結果を報告
-```
-
-#### 3. バグの再現
-
-```
-あなた: このバグを再現して原因を調べて
-
-Claude:
-- Playwright MCPでバグを再現
-- スクリーンショットを取得
-- コンソールログを確認
-- ネットワークリクエストを確認
-- 原因を特定して修正案を提案
-```
-
-### トラブルシューティング
-
-#### Q: Playwright MCPが動作しない
-
-1. `.mcp.json` が正しく設定されているか確認
-2. `.claude/settings.local.json` で `playwright` が有効になっているか確認
-3. `@playwright/mcp` がインストールされているか確認（`npx @playwright/mcp@latest` で自動インストール）
-
-#### Q: テストが失敗する
-
-1. 開発サーバーが起動しているか確認（`npm run dev`）
-2. `playwright.config.ts` の `baseURL` が正しいか確認
-3. テストファイルのセレクターが正しいか確認
-
-#### Q: スクリーンショットが取得できない
-
-1. Playwright MCPが正しく設定されているか確認
-2. ブラウザが起動しているか確認
-3. 権限の問題がないか確認
-
-### ベストプラクティス
-
-1. **テストは具体的に**
-   - 「テストして」ではなく「ログインボタンをクリックしてウォレット接続ができることを確認して」のように具体的に
-
-2. **E2Eテストは重要なフローのみ**
-   - すべての機能をE2Eテストにする必要はない
-   - ユーザーの主要な操作フローをテスト
-
-3. **テストデータの準備**
-   - テストに必要なデータ（ユーザー、商品など）を事前に準備
-
-4. **フレーキーテストの管理**
-   - 不安定なテストは `test.fixme()` で一時的に無効化
-   - 原因を特定して修正
-
-### 参考リソース
-
-- [Playwright公式ドキュメント](https://playwright.dev/)
-- [Playwright MCP GitHub](https://github.com/microsoft/playwright-mcp)
-- [E2Eテストコマンド (`/e2e`)](#スラッシュコマンド) - E2Eテストの生成と実行
-
----
-
-## Context7 MCP：最新ドキュメント検索
-
-### Context7 MCPとは
-
-**Context7 MCP**は、Claude Code が**ライブラリの最新ドキュメントとコード例**を検索できるようにするMCPサーバーです。
-AIの学習データにはない最新の情報を取得できます。
-
-#### なぜContext7が必要か
-
-| 問題 | Context7の解決策 |
-|------|-----------------|
-| AIの知識が古い | 最新のドキュメントを検索 |
-| APIが変更された | 現在のAPI仕様を取得 |
-| 新しいライブラリを使いたい | 最新のコード例を取得 |
-
-### 設定方法
-
-このプロジェクトでは、既にContext7 MCPが設定されています。
-
-#### 1. MCP設定ファイル（`.mcp.json`）
-
-```json
-{
-  "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp"]
-    }
-  }
-}
-```
-
-### 使い方
-
-Context7は2つのツールを提供します:
-
-#### 1. ライブラリIDを解決する
-
-まず、ライブラリ名からContext7用のIDを取得します。
-
-```
-あなた: Next.js の App Router の使い方を調べて
-
-Claude:
-1. resolve-library-id で "next.js" を検索
-2. /vercel/next.js というIDを取得
-```
-
-#### 2. ドキュメントを検索する
-
-取得したIDでドキュメントを検索します。
-
-```
-Claude:
-1. query-docs で /vercel/next.js を指定
-2. "App Router" に関するドキュメントを取得
-3. 最新のコード例を含む回答を提供
-```
-
-### 実際の使い方例
-
-#### 例1: ライブラリの使い方を調べる
-
-```
-あなた: ethers.js v6 でコントラクトを呼び出す方法を教えて
-
-Claude:
-1. Context7で ethers.js を検索
-2. 最新のドキュメントを取得
-3. v6 の正しい書き方を回答
-```
-
-#### 例2: 新しいフレームワークを学ぶ
-
-```
-あなた: Playwright の最新のテスト書き方を教えて
-
-Claude:
-1. Context7で playwright を検索
-2. 最新のテストパターンを取得
-3. 現在推奨される書き方を回答
-```
-
-#### 例3: APIの変更を確認する
-
-```
-あなた: React 19 の新機能を教えて
-
-Claude:
-1. Context7で react を検索
-2. 最新バージョンのドキュメントを取得
-3. 新機能の一覧と使い方を回答
-```
-
-### 利用可能なライブラリ（例）
-
-Context7は多くのライブラリをサポートしています:
-
-| ライブラリ | Context7 ID | 説明 |
-|-----------|-------------|------|
-| Next.js | `/vercel/next.js` | React フレームワーク |
-| React | `/facebook/react` | UI ライブラリ |
-| Playwright | `/microsoft/playwright` | E2E テスト |
-| ethers.js | `/ethers-io/ethers.js` | Ethereum ライブラリ |
-| Claude Code | `/anthropics/claude-code` | このツール自体 |
-
-### ベストプラクティス
-
-1. **具体的に質問する**
-   - 「Next.js について教えて」より「Next.js の Server Actions の書き方を教えて」が良い
-
-2. **バージョンを指定する**
-   - 「ethers v6 で...」のようにバージョンを明示
-
-3. **用途を説明する**
-   - 「認証機能を実装したい」のように目的を伝える
-
-### トラブルシューティング
-
-#### Q: Context7が動作しない
-
-1. `.mcp.json` に `context7` が設定されているか確認
-2. ネットワーク接続を確認
-3. Claude Code を再起動
-
-#### Q: 古い情報が返ってくる
-
-1. より具体的なクエリを使用
-2. バージョンを明示的に指定
-3. 別のライブラリIDを試す（複数ある場合）
-
-### 参考リソース
-
-- [Context7 公式サイト](https://context7.com/)
-- [Upstash Context7 MCP](https://github.com/upstash/context7-mcp)
 
 ---
 
 ## コンテキスト（Contexts）
 
-コンテキストは Claude の「作業モード」を切り替えるためのファイルです。
+コンテキストは Claude Code の「作業モード」を切り替えるためのファイルです。
 異なる作業フェーズで、Claude Codeの動作を最適化できます。
 
 ### コンテキストとは？
@@ -1508,17 +398,15 @@ Context7は多くのライブラリをサポートしています:
 **コンテキスト**は、Claude Codeがどのような「モード」で動作するかを定義するファイルです。
 作業の種類に応じて、Claude Codeの優先順位や動作を変えることができます。
 
-#### なぜコンテキストが必要？
+| 作業フェーズ | 求められること | コンテキスト |
+|------------|--------------|------------|
+| **開発中** | コードを素早く書いて動かす | 開発モード（dev） |
+| **レビュー中** | 品質やセキュリティを徹底的にチェック | レビューモード（review） |
+| **調査中** | コードを読んで理解する（書かない） | 調査モード（research） |
 
-- **開発中**: コードを素早く書いて動かすことが優先
-- **レビュー中**: 品質やセキュリティを徹底的にチェック
-- **調査中**: コードを読んで理解することが優先（書かない）
+### 利用可能なコンテキスト（3個）
 
-同じタスクでも、コンテキストによってClaude Codeのアプローチが変わります。
-
-### 利用可能なコンテキスト
-
-`.claude/contexts/` に 3 つのモードが用意されています。
+`.claude/contexts/` ディレクトリに以下のコンテキストが定義されています：
 
 | モード | ファイル | 説明 | 使いどころ |
 |-------|---------|------|-----------|
@@ -1526,237 +414,33 @@ Context7は多くのライブラリをサポートしています:
 | **レビューモード** | `review.md` | 品質・セキュリティ重視。問題の発見に集中 | PRをレビューする時 |
 | **調査モード** | `research.md` | コードを読んで理解することに集中。書かない | コードベースを理解したい時 |
 
-### 開発モード（Development Context）
-
-**ファイル**: `.claude/contexts/dev.md`
-
-開発モードは、**コードを書いて動かすこと**に集中します。
-
-#### 動作の特徴
-
-- ✅ **コードを先に書く** - 説明は後回し
-- ✅ **動くものを優先** - 完璧より動作を優先
-- ✅ **変更後にテストを実行** - 動作確認を忘れない
-- ✅ **アトミックなコミット** - 小さな単位でコミット
-
-#### 優先順位
-
-1. **Get it working** - まず動かす
-2. **Get it right** - 次に正しくする
-3. **Get it clean** - 最後にきれいにする
-
-#### よく使うツール
-
-- `Edit`, `Write` - コードの変更
-- `Bash` - テストやビルドの実行
-- `Grep`, `Glob` - コードの検索
-
-#### 使い方の例
-
-```
-あなた: ログインボタンを追加して
-
-Claude (開発モード):
-- すぐにコードを書く
-- 動作確認のためのテストを実行
-- 動けばOK、完璧さは後回し
-```
-
-### レビューモード（Review Context）
-
-**ファイル**: `.claude/contexts/review.md`
-
-レビューモードは、**コードの品質とセキュリティ**を徹底的にチェックします。
-
-#### 動作の特徴
-
-- ✅ **徹底的に読む** - コメントする前に全体を理解
-- ✅ **重要度で優先順位付け** - critical > high > medium > low
-- ✅ **問題の指摘だけでなく修正案も提示** - 建設的なフィードバック
-- ✅ **セキュリティ脆弱性をチェック** - 特に注意深く
-
-#### レビューチェックリスト
-
-- [ ] ロジックエラー
-- [ ] エッジケース
-- [ ] エラーハンドリング
-- [ ] セキュリティ（インジェクション、認証、シークレット）
-- [ ] パフォーマンス
-- [ ] 可読性
-- [ ] テストカバレッジ
-
-#### 出力形式
-
-ファイルごとにグループ化し、重要度順に表示します。
-
-#### 使い方の例
-
-```
-あなた: このPRをレビューして
-
-Claude (レビューモード):
-- コードを徹底的に読む
-- セキュリティの問題をチェック
-- エッジケースを確認
-- 問題があれば重要度順に報告
-- 修正案も提示
-```
-
-### 調査モード（Research Context）
-
-**ファイル**: `.claude/contexts/research.md`
-
-調査モードは、**コードを読んで理解すること**に集中します。コードは書きません。
-
-#### 動作の特徴
-
-- ✅ **広く読んでから結論を出す** - 早合点しない
-- ✅ **明確化の質問をする** - 不明点を確認
-- ✅ **発見を記録する** - 理解したことを文書化
-- ✅ **理解が明確になるまでコードを書かない** - 調査が優先
-
-#### 調査プロセス
-
-1. **質問を理解する** - 何を調べるべきか明確にする
-2. **関連コード・ドキュメントを探索** - 広く情報を集める
-3. **仮説を立てる** - 考えられる原因や解決策
-4. **証拠で検証** - 仮説が正しいか確認
-5. **発見をまとめる** - 調査結果を整理
-
-#### よく使うツール
-
-- `Read` - コードを理解する
-- `Grep`, `Glob` - パターンを探す
-- `WebSearch`, `WebFetch` - 外部ドキュメントを参照
-- `Task` with `Explore` agent - コードベースの質問に答える
-
-#### 出力形式
-
-発見を先に、推奨事項を後に表示します。
-
-#### 使い方の例
-
-```
-あなた: このプロジェクトでウォレット接続はどう実装されている？
-
-Claude (調査モード):
-- コードを読んで理解する
-- 関連ファイルを探す
-- 実装の流れを説明
-- コードは書かない（調査のみ）
-```
-
 ### コンテキストの切り替え方法
 
-#### 方法1: 明示的に指定する
+#### 自動的に切り替わる（推奨）
+
+Claude Codeは、タスクの内容から適切なコンテキストを自動的に選択します：
+
+| あなたの指示 | 自動選択されるコンテキスト |
+|------------|----------------------|
+| 「実装して」「追加して」「作成して」 | **開発モード** |
+| 「レビューして」「チェックして」「確認して」 | **レビューモード** |
+| 「調査して」「理解して」「どうなっている？」 | **調査モード** |
+
+#### 明示的に指定する
+
+自動選択が期待通りでない場合は、明示的に指定できます：
 
 ```
 あなた: review context でこのコードをレビューして
 あなた: research context でこの機能の実装を調査して
 ```
 
-#### 方法2: 自動的に切り替わる
+### コンテキストとエージェントの違い
 
-Claude Codeは、タスクの内容から適切なコンテキストを自動的に選択します：
-
-- 「実装して」「追加して」→ 開発モード
-- 「レビューして」「チェックして」→ レビューモード
-- 「調査して」「理解して」「どうなっている？」→ 調査モード
-
-### コンテキストの使い分け
-
-#### 開発モードを使う時
-
-- ✅ 新機能を実装する
-- ✅ バグを修正する
-- ✅ リファクタリングする
-- ✅ テストを書く
-
-**例**:
-```
-あなた: ユーザー認証機能を実装して
-→ 開発モードでコードを書く
-```
-
-#### レビューモードを使う時
-
-- ✅ PRをレビューする
-- ✅ コードの品質をチェックする
-- ✅ セキュリティを確認する
-- ✅ ベストプラクティスに従っているか確認する
-
-**例**:
-```
-あなた: このPRをレビューして
-→ レビューモードで徹底的にチェック
-```
-
-#### 調査モードを使う時
-
-- ✅ コードベースを理解したい
-- ✅ 既存の実装を調べたい
-- ✅ アーキテクチャを調査したい
-- ✅ ドキュメントを読んで理解したい
-
-**例**:
-```
-あなた: このプロジェクトでウォレット接続はどう実装されている？
-→ 調査モードでコードを読んで説明
-```
-
-### カスタムコンテキストの作成
-
-プロジェクト固有のコンテキストを作成することもできます。
-
-**例**: `.claude/contexts/debug.md`
-```markdown
-# Debug Context
-
-Mode: Debugging
-Focus: Finding and fixing bugs
-
-## Behavior
-- Reproduce the bug first
-- Check logs and console errors
-- Use breakpoints and step through code
-- Document the root cause
-```
-
-### ベストプラクティス
-
-1. **適切なコンテキストを選ぶ**
-   - 開発中は開発モード
-   - レビュー中はレビューモード
-   - 調査中は調査モード
-
-2. **コンテキストを明示的に指定する**
-   - 自動選択に任せず、必要に応じて明示的に指定
-
-3. **コンテキストに応じた期待を持つ**
-   - 開発モード: 素早い実装を期待
-   - レビューモード: 徹底的なチェックを期待
-   - 調査モード: コードは書かないことを理解
-
-4. **コンテキストを切り替える**
-   - 作業フェーズが変わったら、コンテキストも切り替える
-
-### よくある質問
-
-#### Q: コンテキストを手動で切り替える必要はある？
-**A:** 通常は自動的に適切なコンテキストが選ばれます。特別な場合だけ明示的に指定すればOKです。
-
-#### Q: 複数のコンテキストを同時に使える？
-**A:** いいえ。一度に1つのコンテキストだけが有効です。
-
-#### Q: カスタムコンテキストを作成できる？
-**A:** はい。`.claude/contexts/` に新しい `.md` ファイルを作成すれば、カスタムコンテキストとして使用できます。
-
-#### Q: コンテキストとエージェントの違いは？
-**A:** 
-- **コンテキスト**: Claude Codeの動作モード（開発/レビュー/調査）
-- **エージェント**: 特定のタスクに特化した専門家（planner、code-reviewerなど）
-
-コンテキストは「どう動作するか」、エージェントは「誰が作業するか」を決めます。
+| 項目 | コンテキスト（Contexts） | エージェント（Agents） |
+|------|----------------------|-------------------|
+| **役割** | 「どう動作するか」を決める | 「誰が作業するか」を決める |
+| **例** | 開発モード、レビューモード | planner、code-reviewer |
 
 ---
 
@@ -1772,12 +456,7 @@ Focus: Finding and fixing bugs
 
 ### カバレッジ要件
 
-**80%以上のテストカバレッジを必須**としています。これは以下の理由からです：
-
-- バグの早期発見
-- リファクタリングの安全性
-- コードの品質保証
-- ドキュメントとしての役割
+**80%以上のテストカバレッジを必須**としています。
 
 ### TDDコマンドの使い方
 
@@ -1800,309 +479,52 @@ Focus: Finding and fixing bugs
 | **Integration Tests** | Vitest / Jest | 複数コンポーネントの連携テスト |
 | **E2E Tests** | Playwright | ブラウザでの実際の操作テスト |
 
-### TDDスキル
-
-`.claude/skills/tdd-workflow/` に、TDD手法の詳細定義が含まれています。
-`/tdd` コマンドを実行すると、このスキルが自動的に参照されます。
-
----
-
-## ベストプラクティス
-
-### 1. エージェントファーストデザイン
-
-複雑なタスクは専門エージェントに委任することで、実行が高速になり、フォーカスも維持されます。
-
-**推奨**: 50個のツールを持つエージェントより、5個に絞ったエージェントの方が効率的
-
-### 2. TDD中心のワークフロー
-
-テストを先に書くことで、品質を保ちながら開発を進めます。
-
-**推奨**: 
-- RED→GREEN→REFACTORサイクルを徹底
-- 80%以上のカバレッジを維持
-- `/tdd` コマンドを積極的に使用
-
-### 3. セキュリティファースト
-
-コミット前の必須チェックを自動化します。
-
-**推奨**:
-- ハードコードされたシークレットがないこと
-- すべてのユーザー入力がバリデートされていること
-- 適切なエラーハンドリングがあること
-- `/code-review` と `/security-review` を実行
-
-### 4. コンテキストウィンドウ管理
-
-MCPの有効化は控えめにし、必要なものだけを有効化します。
-
-**推奨**:
-- プロジェクトごとに10個以下のMCPを有効化
-- 有効なツールは80個以下に抑える
-- 使わないMCPは `disabledMcpServers` で無効化
-
-### 5. ルールのモジュラー化
-
-ルールファイルは役割ごとに分割して管理します。
-
-**推奨**: 一つの巨大なファイルより、`security.md`, `coding-style.md`, `testing.md` のように分割
-
-### 6. コマンドのチェーン実行
-
-複数のコマンドを一度に呼び出すことで、ワークフローを効率化します。
-
-**例**:
-```
-/tdd 機能実装
-/code-review
-/e2e 画面テスト
-```
-
-### 7. フックによる自動化
-
-開発者の負担を減らすため、フックで自動チェックを実装します。
-
-**推奨**:
-- console.log の検出
-- TypeScript の型チェック
-- ビルド後の分析
-- PR作成後の通知
-
----
-
-## メモリとCLAUDE.md
-
-### プロジェクトメモリとは
-
-Claude Code は **CLAUDE.md** ファイルを「プロジェクトメモリ」として使用します。
-このファイルに書かれた情報は、Claude が常に参照し、プロジェクト固有のコンテキストを理解するのに役立ちます。
-
-### CLAUDE.md の配置場所
-
-CLAUDE.md は以下の場所に配置できます:
-
-| 場所 | 用途 |
-|------|------|
-| `./CLAUDE.md` | プロジェクトルートに配置（最も一般的） |
-| `./.claude/CLAUDE.md` | .claude ディレクトリ内に配置 |
-| `~/.claude/CLAUDE.md` | ユーザー共通の設定（全プロジェクトで適用） |
-
-### CLAUDE.md の作成
-
-新しいプロジェクトで CLAUDE.md を作成するには:
-
-```bash
-# Claude Code 内で実行
-/init
-```
-
-これにより、プロジェクト構造を分析して CLAUDE.md のテンプレートが生成されます。
-
-### CLAUDE.md に含めるべき情報
-
-効果的な CLAUDE.md には以下の情報を含めます:
-
-#### 1. プロジェクト概要
-```markdown
-# プロジェクト名
-
-## 概要
-何のためのプロジェクトか、技術スタックは何か
-
-## 主要ディレクトリ
-- app/          # Next.js UI
-- packages/     # 共有パッケージ
-- contracts/    # スマートコントラクト
-```
-
-#### 2. 開発コマンド
-```markdown
-## コマンド
-npm run dev       # 開発サーバー
-npm run build     # プロダクションビルド
-npm run test      # テスト実行
-npm run lint      # Lint チェック
-```
-
-#### 3. 環境変数
-```markdown
-## 環境変数
-`.env.local` に設定:
-- NEXT_PUBLIC_API_URL - API エンドポイント
-- DATABASE_URL - データベース接続文字列
-```
-
-#### 4. ハードルール（絶対に守るべきこと）
-```markdown
-## Hard Rules
-1. `app/` から直接 `ethers` を使わない
-2. シークレットをコードにハードコードしない
-3. テストカバレッジ 80% 以上を維持
-```
-
-#### 5. コーディングパターン
-```markdown
-## パターン
-### Connect
-const { isConnected, connectWallet } = useWallet();
-
-### Read
-const data = await callView('getData', [account]);
-```
-
-### このプロジェクトの CLAUDE.md
-
-このプロジェクトの CLAUDE.md には以下の情報が含まれています:
-
-- **Avalanche 固有のルール**: `@avalanche-wallet` 経由でのみチェーンアクセス
-- **useWallet パターン**: Connect / Read / Write の使い方
-- **環境変数**: `NEXT_PUBLIC_CONTRACT_ADDRESS`, `NEXT_PUBLIC_CONTRACT_ABI`
-- **トラブルシューティング**: よくある問題と解決策
-- **利用可能なコマンドとエージェント**: 一覧表
-
-### 設定ファイルの階層
-
-Claude Code は複数の設定ファイルを階層的に読み込みます:
-
-```
-優先度（高 → 低）:
-1. .claude/settings.local.json  (プロジェクト固有、gitignore推奨)
-2. .claude/settings.json        (プロジェクト共通)
-3. ~/.claude/settings.json      (ユーザー共通)
-```
-
-### ベストプラクティス
-
-1. **具体的に書く**
-   - 「コードをきれいに」より「関数は50行以下」が良い
-
-2. **例を含める**
-   - パターンは必ずコード例を添える
-
-3. **更新を忘れない**
-   - プロジェクト構造が変わったら CLAUDE.md も更新
-
-4. **シークレットを含めない**
-   - API キーや認証情報は絶対に書かない
-
-5. **チーム で共有**
-   - CLAUDE.md は Git にコミットしてチームで共有
-
 ---
 
 ## よくある質問
 
-### 初心者向けの質問
+### L1（初心者向け）
 
 #### Q: AIエージェントと普通のチャットボットの違いは？
-**A:** AIエージェントは、テキストで回答するだけでなく、**実際にコードを書いたり、ファイルを編集したり、コマンドを実行したりできます**。普通のチャットボットは情報を提供するだけですが、AIエージェントは作業を完了させてくれます。
+**A:** AIエージェントは、テキストで回答するだけでなく、**実際にコードを書いたり、ファイルを編集したり、コマンドを実行したりできます**。
 
 #### Q: 最初に何から始めればいい？
-**A:** まずは `/plan` コマンドを試してみましょう。実装計画を作成してくれるので、AIエージェントの力を実感できます。次に `/tdd` コマンドで実際の開発を体験してみてください。
+**A:** まずは `/plan` コマンドを試してみましょう。実装計画を作成してくれるので、AIエージェントの力を実感できます。
 
 #### Q: コマンドを覚える必要はある？
-**A:** よく使う3つのコマンド（`/plan`, `/tdd`, `/code-review`）だけ覚えれば十分です。他のコマンドは必要になったときに調べればOKです。
+**A:** よく使う3つのコマンド（`/plan`, `/tdd`, `/code-review`）だけ覚えれば十分です。
 
 #### Q: エージェントを手動で選ぶ必要はある？
-**A:** 通常は自動的に適切なエージェントが選ばれます。特別な場合（例：セキュリティレビューを明示的に依頼したい）だけ、エージェント名を指定すればOKです。
+**A:** 通常は自動的に適切なエージェントが選ばれます。特別な場合だけ明示的に指定すればOKです。
 
 #### Q: 生成されたコードはそのまま使っていい？
-**A:** AIエージェントは強力ですが、完璧ではありません。生成されたコードは必ずレビューし、テストを実行して確認しましょう。`/code-review` コマンドで自動レビューもできます。
+**A:** AIエージェントは強力ですが、完璧ではありません。生成されたコードは必ずレビューし、テストを実行して確認しましょう。
 
-#### Q: 設定ファイルを理解しないと使えない？
-**A:** いいえ。設定ファイルは既に用意されているので、そのまま使えます。カスタマイズしたい場合だけ編集すればOKです。
+### L2（中級者向け）
 
-#### Q: エラーが出たときはどうすればいい？
-**A:** 
-1. エラーメッセージを読む
-2. `/build-fix` コマンドで自動修正を試す
-3. それでも解決しない場合は、エラーメッセージをそのままClaude Codeに伝える
-
-#### Q: どのくらいのレベルから使える？
-**A:** プログラミングの基礎（変数、関数、基本的な構文）が分かれば使えます。高度な知識は必要ありません。AIエージェントがサポートしてくれます。
-
----
-
-### 中級者向けの質問
-
-#### Q: 何も設定しなくても使える？
-**A:** はい。Claude Code を起動すれば `.claude/` の設定は自動で読み込まれます。
-
-### Q: ルールを変えたい・追加したい場合は？
+#### Q: ルールを変えたい・追加したい場合は？
 **A:** `.claude/rules/` に新しい `.md` ファイルを追加するか、既存のファイルを編集してください。
 
-### Q: 特定のフックを無効にしたい場合は？
+#### Q: 特定のフックを無効にしたい場合は？
 **A:** `.claude/settings.local.json` の `hooks` セクションから該当フックを削除してください。
 
-### Q: エージェントをカスタマイズしたい場合は？
-**A:** `.claude/agents/` 内の `.md` ファイルを編集してください。各ファイルにはエージェントの役割と制約が書かれています。
+#### Q: エージェントをカスタマイズしたい場合は？
+**A:** `.claude/agents/` 内の `.md` ファイルを編集してください。
 
-### Q: 新しいスラッシュコマンドを追加したい場合は？
-**A:** `.claude/commands/` に新しい `.md` ファイルを作成してください。ファイル名がコマンド名になります（例: `my-command.md` → `/my-command`）。
+#### Q: 新しいスラッシュコマンドを追加したい場合は？
+**A:** `.claude/commands/` に新しい `.md` ファイルを作成してください。
 
-### Q: GEMINI.md と CLAUDE.md の違いは？
-**A:** `GEMINI.md` は Gemini CLI 向け、`CLAUDE.md` は Claude Code 向けの指示ファイルです。内容は似ていますが、それぞれのツールに最適化されています。
+#### Q: MCPを追加したい場合は？
+**A:** `.claude/settings.local.json` の `enabledMcpjsonServers` に追加してください。ただし、**10個以下に抑える**ことを推奨します。
 
-### Q: MCPを追加したい場合は？
-**A:** `.claude/settings.local.json` の `enabledMcpjsonServers` に追加してください。ただし、**10個以下に抑える**ことを推奨します。コンテキストウィンドウが縮小する可能性があります。
-
-### Q: エージェントにツールを追加したい場合は？
-**A:** `.claude/agents/` 内のエージェントファイルの frontmatter の `tools` セクションを編集してください。ただし、**必要最小限のツールだけを指定**することが重要です。
-
-### Q: カスタムスキルを作成したい場合は？
-**A:** `.claude/skills/` に新しいディレクトリを作成し、`SKILL.md` ファイルを配置してください。プロジェクト固有のスキルとして自動的に読み込まれます。
-
-### Q: フックが動作しない場合は？
-**A:** `.claude/settings.local.json` の `hooks` セクションを確認してください。構文エラーがないか、matcher の正規表現が正しいか確認します。
-
-### Q: Playwright MCPとは何ですか？
-**A:** Playwright MCPは、Claude CodeがPlaywrightの機能を直接使えるようにするMCPサーバーです。ブラウザを操作してE2Eテストを実行したり、デバッグしたりできます。詳細は [Playwright MCP：ブラウザ自動化の統合](#playwright-mcpブラウザ自動化の統合) を参照してください。
-
-### Q: Playwright MCPが動作しない場合は？
-**A:**
-1. `.mcp.json` に `playwright` が設定されているか確認
-2. `.claude/settings.local.json` で `playwright` が有効になっているか確認
-3. `@playwright/mcp` がインストールされているか確認（`npx @playwright/mcp@latest` で自動インストール）
-
-### Q: `/e2e` コマンドとPlaywright MCPの関係は？
-**A:** `/e2e` コマンドは、内部的にPlaywright MCPを使用してE2Eテストを生成・実行します。Playwright MCPが有効になっていれば、`/e2e` コマンドでブラウザを操作してテストを作成できます。
-
-### Q: Context7 MCPとは何ですか？
-**A:** Context7 MCPは、ライブラリの最新ドキュメントとコード例を検索するためのMCPサーバーです。AIの知識が古くても、Context7を通じて最新の情報を取得できます。詳細は [Context7 MCP：最新ドキュメント検索](#context7-mcp最新ドキュメント検索) を参照してください。
-
-### Q: キーボードショートカットを確認するには？
-**A:** Claude Code 内で `?` を押すと、利用可能なすべてのショートカットが表示されます。詳細は [キーボードショートカット](#キーボードショートカット) を参照してください。
-
-### Q: 画像をClaudeに見せるには？
-**A:** クリップボードにある画像を `Ctrl+V` (Mac: `Cmd+V`) で貼り付けるか、画像ファイルのパスを入力します。Claude Code は画像を解析して回答できます。
-
-### Q: 以前の状態に戻すには？
-**A:** `Esc` を2回押すと、コードや会話を以前の状態に巻き戻すことができます。
-
-### Q: 長いプロンプトを編集したい
-**A:** `Ctrl+G` を押すと、デフォルトのテキストエディタでプロンプトを編集できます。
-
----
-
-### 上級者向けの質問
-
-#### Q: カスタムエージェントを作成したい場合は？
-**A:** `.claude/agents/` に新しい `.md` ファイルを作成し、frontmatter形式で定義してください。必要最小限のツールだけを指定することが重要です。
-
-#### Q: プロジェクト固有のルールを追加したい場合は？
-**A:** `.claude/rules/` に新しい `.md` ファイルを追加してください。プロジェクト固有のルールとして自動的に適用されます。
-
-#### Q: 複数のコマンドを連続実行したい場合は？
-**A:** 一つのメッセージで複数のコマンドを指定できます。例：`/tdd 機能実装` の後に `/code-review` を実行するなど。
+#### Q: コンテキストを手動で切り替える必要はある？
+**A:** 通常は自動的に適切なコンテキストが選ばれます。特別な場合だけ明示的に指定すればOKです。
 
 ---
 
 ## 設計思想
 
 このプロジェクトのClaude Code設定は、[everything-claude-code](https://github.com/affaan-m/everything-claude-code) の設計思想に基づいています。
-Anthropic x Forum Ventures ハッカソン優勝者が10ヶ月以上かけて本番環境で使い込んだベストプラクティスを取り入れています。
 
 ### コア原則
 
@@ -2114,7 +536,6 @@ Anthropic x Forum Ventures ハッカソン優勝者が10ヶ月以上かけて本
 2. **TDD中心のワークフロー**
    - RED→GREEN→REFACTORサイクルを徹底
    - 80%以上のカバレッジを必須とする
-   - テストがドキュメントとしても機能
 
 3. **セキュリティファースト**
    - コミット前の必須チェックを自動化
@@ -2124,67 +545,20 @@ Anthropic x Forum Ventures ハッカソン優勝者が10ヶ月以上かけて本
 4. **コンテキストウィンドウ管理**
    - MCPの有効化は控えめに（10個以下推奨）
    - 有効なツールは80個以下に抑える
-   - 200k→70kへの縮小を防ぐ
 
 5. **モジュラー設計**
    - ルールファイルは役割ごとに分割
    - スキルとコマンドを明確に分離
-   - 再利用可能なワークフロー定義
 
 6. **自動化による品質向上**
    - フックによる自動チェック（console.log検出など）
    - TypeScript型チェックの自動実行
-   - PR作成後の自動通知
 
 ### 参考リソース
 
 - [everything-claude-code リポジトリ](https://github.com/affaan-m/everything-claude-code)
 - [The Shorthand Guide to Everything Claude Code（Xスレッド）](https://x.com/affaanmustafa/status/1748123456789123456)
+- [Anthropicハッカソン優勝者のClaude Code設定集「everything-claude-code」を読み解く（Zenn）](https://zenn.dev/ttks/articles/a54c7520f827be)
 - [zenith.chat](https://zenith.chat) - この設定で開発されたプロダクト
 
 ---
-
-## ファイル構成の全体像
-
-```
-avalanche-game-build-tool-kit/
-├── CLAUDE.md                          # Claude Code へのプロジェクト指示
-├── GEMINI.md                          # Gemini CLI へのプロジェクト指示
-├── .claude/
-│   ├── settings.local.json            # MCP・フック設定
-│   ├── agents/                        # 専門エージェント (9個)
-│   │   ├── planner.md
-│   │   ├── architect.md
-│   │   ├── tdd-guide.md
-│   │   ├── code-reviewer.md
-│   │   ├── security-reviewer.md
-│   │   ├── build-error-resolver.md
-│   │   ├── e2e-runner.md
-│   │   ├── refactor-cleaner.md
-│   │   └── doc-updater.md
-│   ├── commands/                      # スラッシュコマンド (19個)
-│   │   ├── plan.md
-│   │   ├── tdd.md
-│   │   ├── code-review.md
-│   │   └── ... (他16個)
-│   ├── rules/                         # 常時適用ルール (8個)
-│   │   ├── security.md
-│   │   ├── coding-style.md
-│   │   ├── testing.md
-│   │   └── ... (他5個)
-│   ├── skills/                        # 知識ベース (11個)
-│   │   ├── frontend-patterns/
-│   │   ├── backend-patterns/
-│   │   ├── security-review/
-│   │   └── ... (他8個)
-│   ├── contexts/                      # 作業モード (3個)
-│   │   ├── dev.md
-│   │   ├── review.md
-│   │   └── research.md
-│   └── scripts/                       # フック用スクリプト
-│       ├── hooks/
-│       └── lib/
-├── app/                               # Next.js UI
-├── packages/avalanche-wallet/         # ウォレット統合
-└── contracts/                         # スマートコントラクト
-```
