@@ -6,15 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "PWDEBUG=1 playwright test"
   },
   "dependencies": {
     "ethers": "^6.16.0",
     "next": "14.2.3",
+    "playwright": "^1.58.1",
+    "pptxgenjs": "^4.0.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
