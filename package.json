@@ -14,8 +14,11 @@
   "dependencies": {
     "ethers": "^6.16.0",
     "next": "14.2.3",
+    "playwright": "^1.58.1",
+    "pptxgenjs": "^4.0.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",
