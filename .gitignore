@@ -33,5 +33,4 @@ coverage/
 # misc
 *.pem
 
-*.skill
 workspace/*

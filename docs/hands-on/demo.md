@@ -27,10 +27,21 @@
 1. リポジトリで「Code」→「Codespaces」→「Create codespace on main」
 2. VS Code がブラウザで起動するまで待つ
 
-https://github.com/CobaltSato/avalanche-build-games-tool-kit/tree/main
+https://github.com/CobaltSato/aたalanche-build-games-tool-kit/tree/main
 
+#### 0-2. 環境の動作確認
 
-#### 0-2. Core Wallet 拡張機能をインストール
+Codespaces が起動したら、開発サーバーを起動して環境が正しくセットアップされているか確認します。
+
+```bash
+npm run dev
+```
+
+- ターミナルに `Local: http://localhost:3000` と表示されれば OK
+- ポップアップで「Open in Browser」が表示されたらクリックして確認
+- 問題があれば `npm ci` を実行して依存関係を再インストール
+
+#### 0-3. Core Wallet 拡張機能をインストール
 
 > 💡 **Core Wallet とは**: Avalanche 公式ウォレット。MetaMask より Avalanche に最適化されており、C-Chain（EVM互換）と X-Chain/P-Chain の両方に対応しています。
 
@@ -110,7 +121,7 @@ description: スキルの説明（Gemini がいつ使うか判断する材料）
 #### 方法 A: URL から直接インストール（推奨）
 
 ```bash
-gemini skills install https://github.com/CobaltSato/react-grid-game-rendering-skill/blob/main/react-css-grid-game-rendering.skill --scope workspace
+gemini skills install--scope workspace
 
 gemini extensions install https://github.com/ankitchiplunkar/frontend-design
 ```
@@ -129,10 +140,16 @@ gemini extensions install https://github.com/ankitchiplunkar/frontend-design
 
 #### 方法 B: ローカルファイルからインストール
 
+こちらよりダウロード
+https://github.com/CobaltSato/react-grid-game-rendering-skill/blob/main/react-css-grid-game-rendering.skill 
+
 ```bash
+mv docs/hands-on/react-css-grid-game-rendering.skill .
+
+gemini 
+
 # ダウンロード後
 gemini skills install ./react-css-grid-game-rendering.skill --scope workspace
-gemini skills install ./avax-like-frontend-design.skill --scope workspace
 ```
 
 ---
@@ -376,7 +393,9 @@ gemini skills disable <name>                    # 無効化
 | スキルファイル | https://github.com/CobaltSato/react-grid-game-rendering-skill |
 | Solidity ベストプラクティス | https://cursor.directory/solidity-development-best-practices |
 | Gemini CLI ドキュメント | https://github.com/google-gemini/gemini-cli |
+| Cursor Directory | https://cursor.directory/ |
 
+> 💡 **Cursor Directory** は AI コーディングアシスタント向けのプロンプト・ルール集。Solidity、React、Python など様々な言語のベストプラクティスが公開されています。
 
 anthropics公式スキル集
 - https://github.com/anthropics/claude-code/tree/main/plugins
@@ -387,8 +406,7 @@ https://geminicli.com/extensions/
 Anthropicハッカソン優勝者の設定
 - https://github.com/affaan-m/everything-claude-code
 
-ClaudeによるPhaserjs・Playwrightのゲーム開発手順
-
+🎮 Phaser 2D GameDev (Oak Woods Platformer) + Agent Skills
 - https://www.youtube.com/watch?v=QPZCMd5REP8
 - https://github.com/chongdashu/phaserjs-oakwoods
 
