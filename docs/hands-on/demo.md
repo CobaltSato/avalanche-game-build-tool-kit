@@ -12,11 +12,38 @@
 
 ---
 
+## 🔗 リソース・動画リンク
+
+### GitHub リポジトリ
+
+- https://github.com/CobaltSato/avalanche-build-games-tool-kit
+
+### その他リソース
+
+| リソース | URL |
+|---------|-----|
+| Core Wallet ダウンロード | https://core.app/download |
+| AVAX 取得シート | [スプレッドシート](https://docs.google.com/spreadsheets/d/1j3cgXLuGrxRjVCi7P7tkAr5IaEnnv7jPtV3Jrz2aDiU/edit?gid=949602416#gid=949602416) |
+| デプロイ用ファイル（予備） | [Google Drive](https://drive.google.com/drive/folders/1CSodRovk0S2Wu0NNTlFl3z0rEF0tgHM2?usp=drive_link) |
+| Snowtrace Explorer | https://c.testnet.snowtrace.io/ |
+| Remix IDE | https://remix.ethereum.org/ |
+
+### Claude Code ガイド
+
+| ドキュメント | URL |
+|-------------|-----|
+| Claude 概要 | https://github.com/CobaltSato/avalanche-build-games-tool-kit/blob/main/docs/Guide.md |
+| Claude クイックスタート | https://github.com/CobaltSato/avalanche-build-games-tool-kit/blob/main/docs/Claude-QuickStart.md |
+
+---
+
 ## 📋 デモ手順
 
 ---
 
 ### Phase 0: 事前準備（5分）
+
+> 🎬 **動画**: [GitHub Codespaces 起動](https://drive.google.com/file/d/1UrczlI6B9qfMd0AC3AAxEXL6mF0-Tb4h/view?usp=sharing) | [Codespaces Setup](https://drive.google.com/file/d/1xv2BBILRCIckLoGTJo_3bVvYZ5Lc7ylJ/view?usp=sharing)
 
 ---
 
@@ -26,8 +53,6 @@
 
 1. リポジトリで「Code」→「Codespaces」→「Create codespace on main」
 2. VS Code がブラウザで起動するまで待つ
-
-https://github.com/CobaltSato/aたalanche-build-games-tool-kit/tree/main
 
 #### 0-2. 環境の動作確認
 
@@ -44,6 +69,8 @@ npm run dev
 #### 0-3. Core Wallet 拡張機能をインストール
 
 > 💡 **Core Wallet とは**: Avalanche 公式ウォレット。MetaMask より Avalanche に最適化されており、C-Chain（EVM互換）と X-Chain/P-Chain の両方に対応しています。
+>
+> 🎬 **動画**: [Core Wallet 初期設定](https://drive.google.com/file/d/1bvtthuZ-Ihp4DHm6CUQByPeYL57S5eLg/view?usp=sharing)
 
 - ダウンロード: https://core.app/download
 - Chrome 拡張機能としてインストール
@@ -87,6 +114,8 @@ gemini --yolo
 
 ### Phase 1: スキルファイルの導入（2分）
 
+> 🎬 **動画**: [スキルのインストール](https://drive.google.com/file/d/1tU4LBaKzDpOrcI3pVPzgn749ieJuuN7s/view?usp=sharing)
+
 ---
 
 > 💡 **スキル（Skills）とは**: Gemini CLI に専門知識をオンデマンドで適用する仕組み。スキルを使うことで、特定のタスク（ゲーム開発、API 設計など）に最適化された振る舞いを AI に与えられます。
@@ -116,43 +145,40 @@ description: スキルの説明（Gemini がいつ使うか判断する材料）
 | **中** | `~/.gemini/skills/`（User） | 個人用、全プロジェクト共通 |
 | **低** | Extension Skills | 拡張機能にバンドル |
 
----
 
-#### 方法 A: URL から直接インストール（推奨）
+#### 1-1. スキルのインストール
+
+Gemini CLI を一度終了してからインストールします。
+
+**Step 1**: スキルファイルを GitHub からダウンロード
+
+- https://github.com/CobaltSato/react-grid-game-rendering-skill/tree/main
+
+**Step 2**: ターミナルで実行（Gemini CLI の外で）
 
 ```bash
-gemini skills install--scope workspace
+# Gemini CLI を終了
+/quit
 
-gemini extensions install https://github.com/ankitchiplunkar/frontend-design
+# ダウンロードしたファイルをプロジェクトルートに配置
+mv ./docs/hands-on/react-css-grid-game-rendering.skill .
+
+# スキルをインストール
+gemini skills install ./react-css-grid-game-rendering.skill --scope workspace
 ```
 
-**インストール後、スキルをリロード:**
+**Step 3**: Gemini CLI 内でリロード
 
 ```bash
-# Gemini CLI 内で実行
+# Gemini CLI を起動
+gemini
+
+# スキルを再読み込み（Gemini CLI 内で）
 /skills reload
 
 # インストール確認
 /skills list
 ```
-
----
-
-#### 方法 B: ローカルファイルからインストール
-
-こちらよりダウロード
-https://github.com/CobaltSato/react-grid-game-rendering-skill/blob/main/react-css-grid-game-rendering.skill 
-
-```bash
-mv docs/hands-on/react-css-grid-game-rendering.skill .
-
-gemini 
-
-# ダウンロード後
-gemini skills install ./react-css-grid-game-rendering.skill --scope workspace
-```
-
----
 
 #### スキル管理コマンド一覧
 
@@ -180,6 +206,8 @@ gemini skills disable my-skill --scope workspace
 
 ### Phase 2: スマートコントラクト作成（5分）
 
+> 🎬 **動画**: [コントラクト作成](https://drive.google.com/file/d/1rMbl0TzMxUTrS5YydppEGE9m-bkxD_Mj/view?usp=sharing)
+
 ---
 
 > 💡 **Gemini CLI のツール**: Gemini はファイル読み書き、シェルコマンド実行、Web アクセスなどのツールを持っています。ユーザーの確認を得てから実行されます。
@@ -205,10 +233,10 @@ gemini skills disable my-skill --scope workspace
 - 位置を初期化する関数
 - 1歩移動する関数（上下左右）
 - 座標は 0-9 の範囲に制限
+- getPosition(address _player)で位置取得
 
 出力先:
 - Solidity: contracts/PositionTracker.sol
-- ABI: .env.local.example に追記
 ```
 
 ---
@@ -225,6 +253,8 @@ gemini skills disable my-skill --scope workspace
 ---
 
 ### Phase 3: テスト AVAX 取得 & デプロイ（5分）
+
+> 🎬 **動画**: [デプロイ手順](https://drive.google.com/file/d/14eKzVflwBh5OpGP0DB-35DkGC2WW_9lI/view?usp=sharing)
 
 ---
 
@@ -331,6 +361,8 @@ NEXT_PUBLIC_CONTRACT_ABI=[...]  # ← .env.local.example から既にコピー�
 
 ### Phase 5: 動作確認（3分）
 
+> 🎬 **動画**: [フェーズ5 完成](https://drive.google.com/file/d/1x7BfXj8-_WSFdMlcGyaiBR6xhDvN3nvs/view?usp=sharing)
+
 ---
 
 #### 5-1. 開発サーバー起動
@@ -345,7 +377,7 @@ npm run dev
 
 1. `localhost:3000` を開く
 2. Core Wallet を接続
-3. 矢印キーでプレイヤーを移s
+3. 矢印キーでプレイヤーを移動
 4. トランザクションを承認
 5. 座標がブロックチェーンに保存されることを確認
 
@@ -422,564 +454,3 @@ Anthropicハッカソン優勝者の設定
 🎮 Phaser 2D GameDev (Oak Woods Platformer) + Agent Skills
 - https://www.youtube.com/watch?v=QPZCMd5REP8
 - https://github.com/chongdashu/phaserjs-oakwoods
-
----
-
-## 🎨 Bonus: Gemini + frontend-design によるデザイン仕上げ
-
-> 💡 **frontend-design スキル**: プロダクション品質のフロントエンドデザインを生成するためのスキル。カラーパレット、タイポグラフィ、レイアウト、アニメーションなどの設計原則に基づいて UI を洗練させます。
-
----
-
-### 事前準備: frontend-design スキルの有効化
-
-```bash
-# Extension をインストール（既にインストール済みならスキップ）
-gemini extensions install https://github.com/ankitchiplunkar/frontend-design
-
-# スキルを有効化
-gemini skills enable frontend-design
-
-# 確認
-/skills list
-```
-
----
-
-### Gemini にデザイン仕上げを依頼
-
-```
-frontend-design スキルを使って、グリッドゲームのUIをプロ品質に仕上げて。
-
-要件:
-- Avalanche ブランドカラー（#E84142 レッド、#000000 ブラック）を活用
-- グリッドセルにホバーエフェクトを追加
-- プレイヤーアイコンにアニメーション（パルス or バウンス）
-- ウォレット接続ボタンをモダンなデザインに
-- トランザクション状態のローディングインジケーター
-- レスポンシブ対応（モバイルでも操作可能）
-- ダークモード基調
-
-参照:
-- 現在の UI コンポーネント（app/ 配下）
-- Avalanche 公式サイトのデザイン: https://www.avax.network/
-```
-
----
-
-### 期待される出力
-
-| 改善項目 | Before | After |
-|---------|--------|-------|
-| カラー | デフォルト | Avalanche ブランドカラー |
-| グリッド | 単純な border | グラデーション + ホバー効果 |
-| プレイヤー | 静的な表示 | パルスアニメーション |
-| ボタン | 基本的なスタイル | グラス morphism / ネオン効果 |
-| 状態表示 | テキストのみ | スピナー + プログレスバー |
-
----
-
-### デザインのカスタマイズ例
-
-```
-# 別のテーマを試す
-「サイバーパンク風のネオンテーマに変更して」
-
-# アクセシビリティ強化
-「WCAG AA 準拠のコントラスト比を確保して」
-
-# ミニマリスト
-「余計な装飾を削除してミニマルなデザインに」
-```
-
----
-
-### Tips
-
-- **段階的に適用**: 一度に全てを変更せず、コンポーネントごとに確認
-- **スクリーンショット比較**: 変更前後を比較して意図通りか確認
-- **Tailwind CSS との相性**: frontend-design は Tailwind クラスを活用した出力が得意
-- **フィードバックループ**: 「もっとコントラストを上げて」など具体的に指示
-
----
-
-## 📎 付録
-
----
-
-### 付録 A: Gemini CLI Extensions とは
-
-> 💡 **Extensions（拡張機能）** は Gemini CLI の機能を拡張するアドオンシステムです。お気に入りのツールを接続し、AI コマンドラインをカスタマイズできます。
-
-#### Extensions の種類
-
-| 種類 | 説明 | 例 |
-|------|------|-----|
-| **Database/MCP Servers** | データベースやデータサービスへの接続 | PostgreSQL, MongoDB |
-| **Context Tools** | 専門知識やドキュメントの追加 | ライブラリドキュメント |
-| **Skills** | 特定タスクの実行機能 | Web スクレイピング、画像生成、TTS |
-| **Terminal Commands** | カスタム CLI コマンド | 独自ワークフロー |
-| **Hooks** | 開発ワークフローへの統合 | 自動フォーマット、検証 |
-
-#### インストール方法
-
-```bash
-# リポジトリ URL から直接インストール
-gemini extensions install [repository-url]
-
-# 例: frontend-design Extension
-gemini extensions install https://github.com/ankitchiplunkar/frontend-design
-```
-
-#### Extensions エコシステム
-
-公式サイト（https://geminicli.com/extensions/）には **342 以上** のコミュニティ製 Extension が公開されています：
-
-- **クラウドプラットフォーム**: Google Cloud, AWS サービス
-- **開発ツール**: GitHub, Kubernetes, Terraform
-- **データサービス**: データベース、ベクターストア、API
-- **AI/ML 機能**: 画像生成、音声合成
-- **生産性ツール**: Slack, Jira, Monday.com
-
-> ⚠️ **注意**: Extensions はサードパーティ開発者によって作成されており、Google による公式検証はありません。セキュリティを確認してから使用してください。
-
-**参照**: https://geminicli.com/extensions/
-
----
-
-### 付録 B: Anthropic ハッカソン優勝者の Claude Code 設定集
-
-> 💡 2025年9月の **Anthropic x Forum Ventures ハッカソン**で優勝した @affaanmustafa 氏と @DRodriguezFX 氏による、10ヶ月以上の本番運用経験に基づく Claude Code 設定集です。
-
-#### リソース
-
-| リソース | URL |
-|---------|-----|
-| **GitHub リポジトリ** | https://github.com/affaan-m/everything-claude-code |
-| **解説記事（Zenn）** | https://zenn.dev/ttks/articles/a54c7520f827be |
-
-#### ディレクトリ構成（6つの主要コンポーネント）
-
-```
-~/.claude/
-├── agents/      # 特化型サブエージェント（計画、設計、レビュー、セキュリティ、テスト）
-├── skills/      # 再利用可能なワークフロー定義とドメイン知識
-├── commands/    # スラッシュコマンド（/tdd, /plan, /code-review など）
-├── rules/       # プロジェクト全体のガイドライン（セキュリティ、テスト、Git、パフォーマンス）
-├── hooks/       # イベント駆動の自動化（PreToolUse, PostToolUse, Stop）
-└── mcp-configs/ # 外部サービス連携（GitHub, Supabase, Vercel, Railway）
-```
-
-#### 重要な推奨事項
-
-**1. コンテキストウィンドウ管理**
-
-> ⚠️ MCP を有効化しすぎると、コンテキストウィンドウが **200k → 70k トークン** に縮小する可能性があります。
-
-- **合計**: 20-30 MCP まで設定可能
-- **プロジェクト毎**: 10 以下を有効化
-- **ツール数**: 80 以下を推奨
-
-**2. エージェント設計**
-
-サブエージェントには必要最小限のツールのみを提供することで、より高速で集中した実行が可能になります。
-
-**3. テスト哲学（TDD）**
-
-```
-RED → GREEN → REFACTOR サイクル
-80%+ テストカバレッジを必須化
-```
-
-**4. セキュリティ要件**
-
-コミット前に以下をチェック：
-- [ ] ハードコードされた秘密情報がないか
-- [ ] 入力バリデーションが実装されているか
-- [ ] エラーハンドリングが適切か
-- [ ] 依存関係の脆弱性スキャン
-
-#### 活用のヒント
-
-- **段階的に導入**: 一度に全てをコピーせず、必要なコンポーネントから始める
-- **プロジェクトに合わせてカスタマイズ**: ルールやスキルは自分のプロジェクトに最適化
-- **MCP の選定**: 本当に必要な MCP のみを有効化してコンテキストを節約
-
----
-
-### 付録 C: Hooks（フック）システム詳解
-
-> 💡 **Hooks** は Claude Code のツール実行前後に自動実行されるイベント駆動スクリプトです。セキュリティチェック、自動フォーマット、ログ記録などを自動化できます。
-
-#### Hook の種類
-
-| Hook タイプ | 発火タイミング | 主な用途 |
-|------------|--------------|---------|
-| **PreToolUse** | ツール実行**前** | バリデーション、パラメータ修正、実行ブロック |
-| **PostToolUse** | ツール実行**後** | 自動フォーマット、品質チェック、通知 |
-| **Notification** | 通知発生時 | 外部サービス連携、ログ記録 |
-| **Stop** | セッション終了時 | 最終検証、クリーンアップ |
-
-#### 設定ファイルの場所
-
-```
-~/.claude/settings.json       # グローバル設定（全プロジェクト共通）
-.claude/settings.json         # プロジェクト固有設定
-```
-
-#### 設定例
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'Running: $TOOL_INPUT'"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "npx prettier --write \"$TOOL_INPUT_FILE_PATH\""
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-#### 実用的な Hook 例
-
-**1. TypeScript 型チェック（PostToolUse）**
-```json
-{
-  "matcher": "Edit",
-  "hooks": [{
-    "type": "command",
-    "command": "if [[ \"$TOOL_INPUT_FILE_PATH\" == *.ts ]]; then npx tsc --noEmit; fi"
-  }]
-}
-```
-
-**2. console.log 警告（PostToolUse）**
-```json
-{
-  "matcher": "Edit",
-  "hooks": [{
-    "type": "command",
-    "command": "grep -n 'console.log' \"$TOOL_INPUT_FILE_PATH\" && echo '⚠️ console.log found!'"
-  }]
-}
-```
-
-**3. Git Push 前レビュー（PreToolUse）**
-```json
-{
-  "matcher": "Bash",
-  "hooks": [{
-    "type": "command",
-    "command": "if echo \"$TOOL_INPUT\" | grep -q 'git push'; then echo '確認: push しますか？'; fi"
-  }]
-}
-```
-
-**4. 長時間コマンドの tmux 提案（PreToolUse）**
-```json
-{
-  "matcher": "Bash",
-  "hooks": [{
-    "type": "command",
-    "command": "if echo \"$TOOL_INPUT\" | grep -qE '^(npm|pnpm|yarn|cargo)'; then echo '💡 tmux での実行を推奨'; fi"
-  }]
-}
-```
-
-#### 環境変数
-
-Hook 内で使用できる環境変数：
-
-| 変数 | 説明 |
-|------|------|
-| `$TOOL_NAME` | 実行されるツール名 |
-| `$TOOL_INPUT` | ツールへの入力 |
-| `$TOOL_INPUT_FILE_PATH` | 対象ファイルパス（Edit/Write時） |
-| `$TOOL_OUTPUT` | ツールの出力（PostToolUse時のみ） |
-
-> ⚠️ **注意**: Hook のエラーはツール実行をブロックする可能性があります。本番環境では慎重にテストしてください。
-
----
-
-### 付録 D: Agents（エージェント）システム詳解
-
-> 💡 **Agents** は特定タスクに特化したサブエージェントです。メインの Claude とは別のコンテキストで動作し、専門的な作業を効率的に処理します。
-
-#### エージェント vs スキル の違い
-
-| 特性 | エージェント (Agents) | スキル (Skills) |
-|------|---------------------|----------------|
-| **実行主体** | 別のサブプロセス | メインの Claude |
-| **コンテキスト** | 独立（親から継承可能） | 共有 |
-| **ツールアクセス** | 制限可能 | 全ツール |
-| **用途** | 並列処理、専門タスク | ワークフロー定義 |
-| **定義場所** | `~/.claude/agents/` | `~/.claude/skills/` |
-
-#### 利用可能なエージェント例
-
-| エージェント | 用途 | 起動タイミング |
-|------------|------|--------------|
-| **planner** | 実装計画・要件分析 | 複雑な機能実装時 |
-| **architect** | システム設計・アーキテクチャレビュー | 設計判断時 |
-| **tdd-guide** | テスト駆動開発ガイダンス | 新機能・バグ修正時 |
-| **code-reviewer** | コード品質・セキュリティレビュー | コード作成後 |
-| **security-reviewer** | 脆弱性分析 | 認証・API実装時 |
-| **build-error-resolver** | ビルドエラー診断・修正 | ビルド失敗時 |
-| **e2e-runner** | Playwright E2Eテスト | 重要フロー検証時 |
-| **refactor-cleaner** | デッドコード削除 | コードメンテナンス時 |
-
-#### エージェント定義ファイル（例: planner.md）
-
-```markdown
----
-name: planner
-description: 実装計画を作成し、リスクを特定するエージェント
-tools:
-  - Read
-  - Glob
-  - Grep
-  - WebFetch
----
-
-# Planner Agent
-
-あなたは実装計画の専門家です。
-
-## 責務
-1. 要件を分析し、実装ステップを特定
-2. 依存関係とリスクを洗い出し
-3. 段階的な実装計画を提案
-
-## 出力フォーマット
-- フェーズ分割（各フェーズ 2-3 タスク）
-- リスクと対策
-- 推奨アプローチ
-```
-
-#### エージェント設計のベストプラクティス
-
-**1. 最小限のツール**
-```yaml
-# 良い例：必要なツールのみ
-tools:
-  - Read
-  - Grep
-
-# 悪い例：全ツール
-tools: "*"
-```
-
-**2. 明確な責務**
-- 1エージェント = 1責務
-- 複数タスクは複数エージェントに分割
-
-**3. 並列実行の活用**
-```
-# 独立したタスクは並列で実行
-Task 1: セキュリティレビュー (security-reviewer)
-Task 2: パフォーマンス分析 (architect)
-Task 3: テストカバレッジ確認 (tdd-guide)
-```
-
-**4. コンテキスト継承**
-
-エージェントは親コンテキストを継承できます。詳細な指示を省略し、簡潔なプロンプトで起動可能：
-
-```
-「上記のコードをレビューして」
-→ code-reviewer エージェントが会話履歴を参照
-```
-
----
-
-### 付録 E: カスタムコマンド（スラッシュコマンド）詳解
-
-> 💡 **カスタムコマンド** は `/` で始まるショートカットです。よく使うワークフローを1コマンドで実行できます。
-
-#### コマンドの配置場所
-
-```
-~/.claude/commands/          # グローバル（全プロジェクト共通）
-.claude/commands/            # プロジェクト固有
-```
-
-#### コマンドファイルの構造
-
-ファイル名がコマンド名になります（例: `tdd.md` → `/tdd`）
-
-```markdown
----
-name: tdd
-description: テスト駆動開発ワークフローを実行
-allowed_tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
----
-
-# TDD ワークフロー
-
-以下の手順でテスト駆動開発を実行してください：
-
-## 1. RED（テスト作成）
-- 失敗するテストを先に書く
-- テストを実行して失敗を確認
-
-## 2. GREEN（実装）
-- テストが通る最小限の実装
-- テストを実行して成功を確認
-
-## 3. REFACTOR（改善）
-- コードの品質を改善
-- テストが通ることを再確認
-
-## 4. カバレッジ確認
-- 80% 以上のカバレッジを目標
-```
-
-#### 主要なコマンド例
-
-| コマンド | 説明 | 使用例 |
-|---------|------|-------|
-| `/plan` | 実装計画を作成 | `/plan ログイン機能を追加` |
-| `/tdd` | テスト駆動開発 | `/tdd calculateTotal関数を実装` |
-| `/code-review` | コードレビュー | `/code-review src/auth/` |
-| `/commit` | コミット作成 | `/commit` |
-| `/e2e` | E2Eテスト生成・実行 | `/e2e ログインフロー` |
-| `/build-fix` | ビルドエラー修正 | `/build-fix` |
-| `/refactor-clean` | デッドコード削除 | `/refactor-clean` |
-
-#### 引数付きコマンド
-
-コマンドには引数を渡せます：
-
-```bash
-# 引数なし
-/plan
-
-# 引数あり
-/plan ユーザー認証機能をJWTで実装
-
-# 複数引数
-/code-review src/components/ --focus security
-```
-
-コマンドファイル内で `$ARGUMENTS` として参照：
-
-```markdown
----
-name: plan
-description: 実装計画を作成
----
-
-# 実装計画
-
-対象: $ARGUMENTS
-
-以下の観点で計画を作成してください...
-```
-
-#### 実用的なカスタムコマンド例
-
-**1. /quick-fix（簡易バグ修正）**
-
-```markdown
----
-name: quick-fix
-description: 簡易バグ修正
----
-
-# Quick Fix
-
-$ARGUMENTS のバグを修正してください。
-
-手順:
-1. 問題のコードを特定
-2. 最小限の修正を実施
-3. 関連テストを実行
-4. 修正内容を簡潔に報告
-```
-
-**2. /security-check（セキュリティチェック）**
-
-```markdown
----
-name: security-check
-description: セキュリティ脆弱性をチェック
----
-
-# Security Check
-
-以下の観点でセキュリティをチェック:
-
-- [ ] ハードコードされた秘密情報
-- [ ] SQLインジェクション
-- [ ] XSS脆弱性
-- [ ] 認証・認可の問題
-- [ ] 依存関係の脆弱性
-```
-
-**3. /explain（コード解説）**
-
-```markdown
----
-name: explain
-description: コードを解説
----
-
-# コード解説
-
-$ARGUMENTS について、以下の観点で解説:
-
-1. **目的**: このコードは何をしているか
-2. **仕組み**: どのように動作するか
-3. **依存関係**: 何に依存しているか
-4. **改善点**: 潜在的な問題や改善案
-```
-
-#### コマンドのベストプラクティス
-
-- **命名**: 動詞で始める（`/check-`, `/create-`, `/fix-`）
-- **粒度**: 1コマンド = 1ワークフロー
-- **ドキュメント**: description を必ず記載
-- **ツール制限**: 必要なツールのみ allowed_tools に指定
-
----
-
-### 付録 F: Claude Code vs Gemini CLI 機能比較詳細
-
-| 機能カテゴリ | Claude Code | Gemini CLI |
-|------------|-------------|------------|
-| **コンテキストファイル** | CLAUDE.md | GEMINI.md |
-| **カスタムコマンド** | .claude/commands/ | スラッシュコマンド |
-| **エージェント** | .claude/agents/ | Extensions |
-| **スキル** | .claude/skills/ | .gemini/skills/ |
-| **フック** | hooks (settings.json) | Hooks (Extensions) |
-| **MCP連携** | 対応 | 対応 |
-| **自動承認** | allowedTools 設定 | --yolo オプション |
-| **セッション再開** | /resume | --resume latest |
-
-#### 相互運用のヒント
-
-- スキルファイルは **相互変換可能**（Skill-Creator / /skill-create）
-- MCP サーバーは **共通** で使用可能
-- プロンプトのベストプラクティスは **共通**
