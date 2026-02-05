@@ -1,0 +1,26 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  width: 400px; /* Adjust as needed */
+  height: 400px; /* Adjust as needed */
+  border: 1px solid #ccc;
+  gap: 1px;
+  background-color: #eee;
+}
+
+.cell {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player {
+  background-color: blue;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  justify-self: center;
+  align-self: center;
+}
