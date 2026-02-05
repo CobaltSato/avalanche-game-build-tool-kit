@@ -33,6 +33,7 @@ Rules:
 - `app/` から `ethers` を直接使わない（チェーンアクセスは **必ず** `@avalanche-wallet` 経由）
 - `WalletProvider` は `app/layout.tsx` でアプリ全体をラップし続ける（剥がさない）
 - ABI/Address をコードにハードコードしない（`.env.local` を単一ソースにする）
+- `callView` を使う際は、コントラクトの `msg.sender` を直接参照するロジックに依存しない（ビュー関数は通常、引数としてアドレスを受け取るか、特定のユーザーのコンテキストで動作する設計にする）
 
 ## Implementation patterns (project-specific)
 - **Connect**: UI から `useWallet().connectWallet()` を呼ぶ
