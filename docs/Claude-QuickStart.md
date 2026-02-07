@@ -548,45 +548,95 @@ console.log を残したコードを書いて
 
 ## Work 9: フックの動作を確認する
 
-**目的**: フックの自動実行を体験する
+**目的**: わざと型エラーを書いて、フックが自動でキャッチする体験をする
 
 ```
-  ファイル編集
+  あなた: 「型エラーのあるコードを書いて」
        │
        ▼
-  PostToolUse フックが発動
+  Claude が .tsx ファイルを編集（Edit / Write ツール）
        │
-       ├── console.log 検出
-       │     → "WARNING: console.log found"
+       ▼
+  PostToolUse フックが自動発動！
        │
-       └── TypeScript 型チェック
-             → エラーがあれば表示
+       ├── ① Prettier   自動フォーマット（静かに実行）
+       │
+       ├── ② TypeScript  型チェック
+       │     → [Hook] TS errors: ... が表示される ★ ここを体験
+       │
+       └── ③ console.log 検出（もしあれば）
+             → [Hook] WARNING: console.log found
 ```
 
 ### やること
 
-#### Step 1: console.log の検出
+#### Step 1: わざと型エラーを書かせる
+
+Counter.tsx の `setCount` は `number` しか受け付けません。
+わざと `string` を渡すコードを書かせて、フックに検出させましょう。
+
+> **重要**: Claude は賢いので、ただ間違ったコードを頼むと勝手に正しく直します。
+> 「フックの確認のためにわざと書いて」と**意図を伝える**のがコツです。
 
 ```
-app/utils/helper.ts に console.log を含む関数を追加して
+フックの動作確認をしたい。Counter.tsx の setCount に文字列 "hello" を渡すボタンを、わざと型エラーのまま追加して。直さないで。
 ```
 
-**期待**: 編集後に `[Hook] WARNING: console.log found` が表示される
+#### Step 2: フックが自動でキャッチすることを確認
 
-#### Step 2: TypeScript の型チェック
+何もしなくて OK です。Claude がファイルを編集した直後に **PostToolUse フック**が自動で走り、
+以下のような出力が表示されます：
 
 ```
-app/utils/helper.ts に型エラーを含む関数を追加して
+⏺ Update(app/components/Counter.tsx)
+  ⎿  Added 6 lines
+      27          >
+      28            +
+      29          </button>
+      30 +        <button
+      31 +          onClick={() => setCount("hello")}
+      32 +          style={{ fontSize: "1.5rem", padding: "0.5rem 1.5rem" }}
+      33 +        >
+      34 +          Bug
+      35 +        </button>
+      36        </div>
+      37      </section>
+      38    );
+  ⎿  Running PostToolUse hooks…                       ← ★ ここ！
+  ⎿  Found 1 new diagnostic issue in 1 file
 ```
 
-**期待**: 編集後に TypeScript のエラーが表示される
+> **ポイント**: あなたは `tsc` を実行していません。**フックが勝手に型チェックを実行した**のです。
+
+#### Step 3（おまけ）: console.log も検出させる
+
+```
+Counter.tsx に console.log("debug") を1行追加して
+```
+
+**期待**: 型エラーに加えて `[Hook] WARNING: console.log found` も表示される
 
 ### 確認ポイント
 
-- [ ] `console.log` が検出されて警告が表示されたか
-- [ ] TypeScript の型チェックが自動実行されたか
+- [ ] 自分で `tsc` を実行していないのに型エラーが表示されたか
+- [ ] `[Hook] TS errors:` というメッセージが見えたか
+- [ ] （おまけ）`console.log` 警告も表示されたか
 
-> フックにより、**本番環境へのデバッグコード混入を自動防止**します。
+### 裏で何が起きている？
+
+```
+  .claude/settings.json の hooks 設定
+  ─────────────────────────────────
+
+  PostToolUse (Edit|Write にマッチ):
+    1. Prettier で自動整形
+    2. npx tsc --noEmit でプロジェクト全体を型チェック
+       → 編集したファイルのエラー行だけ抽出して表示
+    3. console.log が含まれていたら警告
+```
+
+> フックにより、**型エラーやデバッグコードの混入を自動防止**します。
+> 人間が忘れても、フックは忘れません。
 
 > フックの種類と実行フロー → [Guide.md: フック](./Guide.md#フック自動チェック)
 
